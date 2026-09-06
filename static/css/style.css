@@ -194,11 +194,15 @@ h1, h2, .brand {
     }
 }
 
+#education {
+    padding-top:36px;
+    padding-bottom:40px;
+}
+
 .timeline-item{
     position: relative;
     padding-left:24px;
-    margin-bottom: 1.5rem;
-;
+    margin-bottom: 3rem;
     border-radius: var(--radius);
 }
 
@@ -219,12 +223,31 @@ h1, h2, .brand {
     left:4.75px;
     top: 20px;
     width:2px;
-    height: 120%;
+    height: 170%;
     background-color: var(--line);
 }
 
 .timeline-item:last-child::after{
     display:none;
+}
+
+.institution-logo{
+    margin-left: 20px;
+    position: absolute;
+    height: 100%;
+    -webikit-mask-image: linear-gradient(to right, black 0%, transparent 100%);
+    mask-image: linear-gradient(to right, black 0%, transparent 100%);
+    opacity: 90%;
+}
+
+.timeline-item--logo{
+    position: relative;
+}
+
+.timeline-item--logo h3,
+.timeline-item--logo h4,
+.timeline-item--logo p{
+    margin-left: 70px;
 }
 
 .experience-item{
@@ -243,7 +266,12 @@ h1, h2, .brand {
     color: var(--text-muted);
 }
 
-#education {
-    padding-top:72px;
-    padding-bottom:80px;
+.section-header{
+    font-size: clamp(3rem, 7vw, 5rem);
+    line-height: 0.95;font-size: 50px;
+    margin-bottom: 35px;
+}
+
+#education h3{
+    font-size: 30px;
 }
