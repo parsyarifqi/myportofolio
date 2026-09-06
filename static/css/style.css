@@ -223,7 +223,7 @@ h1, h2, .brand {
     left:4.75px;
     top: 20px;
     width:2px;
-    height: 170%;
+    height: calc(100% + 3rem);
     background-color: var(--line);
 }
 
@@ -237,7 +237,7 @@ h1, h2, .brand {
     height: 100%;
     -webikit-mask-image: linear-gradient(to right, black 0%, transparent 100%);
     mask-image: linear-gradient(to right, black 0%, transparent 100%);
-    opacity: 90%;
+    opacity: 50%;
 }
 
 .timeline-item--logo{
@@ -247,15 +247,38 @@ h1, h2, .brand {
 .timeline-item--logo h3,
 .timeline-item--logo h4,
 .timeline-item--logo p{
-    margin-left: 70px;
+    margin-left: 80px;
 }
 
+#experience{
+    padding-top:36px;
+    padding-bottom:40px;
+}
+
+
 .experience-item{
-    padding:12px;
+    padding:20px;
     border-radius: var(--radius);
     background-color: var(--line);
-    padding-bottom:20px;
     margin-bottom: 20px;
+    flex:1;
+}
+
+.experience-grid{
+    display: flex;
+    grid-template-columns: repeat(2, 1fr);
+    gap:20px
+}
+
+@media (max-width: 600px) {
+    .experience-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "experience #1"
+            "experience #2"
+            "experience #3";
+        flex-direction: column;
+    }
 }
 
 .experience-item h4 {
@@ -267,8 +290,7 @@ h1, h2, .brand {
 }
 
 .section-header{
-    font-size: clamp(3rem, 7vw, 5rem);
-    line-height: 0.95;font-size: 50px;
+    font-size: clamp(3rem, 4vw, 6rem);
     margin-bottom: 35px;
 }
 
