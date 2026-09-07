@@ -194,7 +194,7 @@ h1, h2, .brand {
     }
 }
 
-#education {
+#education { 
     padding-top:36px;
     padding-bottom:40px;
 }
@@ -206,7 +206,7 @@ h1, h2, .brand {
     border-radius: var(--radius);
 }
 
-.timeline-item::before{
+.timeline-item::before{ /*bagian ini mengatur dot pada garis timeline yang menandakan masing masing entri.*/
     content: "";
     position:absolute;
     width:12px;
@@ -217,7 +217,7 @@ h1, h2, .brand {
     top:8px;
 }
 
-.timeline-item::after{
+.timeline-item::after{ /*bagian ini mengatur garis timeline yang menyambung hingga entri terakhir*/
     content:"";
     position:absolute;
     left:4.75px;
@@ -227,11 +227,11 @@ h1, h2, .brand {
     background-color: var(--line);
 }
 
-.timeline-item:last-child::after{
+.timeline-item:last-child::after{ /*bagian ini mengatur agar garis sisa pada bagian bawah timeline tidak ditampilkan.*/
     display:none;
 }
 
-.institution-logo{
+.institution-logo{ /*bagian ini mengatur margin dan juga efek gradien pada logo institusi di section education*/
     margin-left: 20px;
     position: absolute;
     height: 100%;
@@ -255,6 +255,11 @@ h1, h2, .brand {
     padding-bottom:40px;
 }
 
+.experience-grid{
+    display: flex;
+    grid-template-columns: repeat(2, 1fr);
+    gap:20px;
+}
 
 .experience-item{
     padding:20px;
@@ -264,13 +269,9 @@ h1, h2, .brand {
     flex:1;
 }
 
-.experience-grid{
-    display: flex;
-    grid-template-columns: repeat(2, 1fr);
-    gap:20px
-}
 
-@media (max-width: 600px) {
+
+@media (max-width: 600px) { /*bagian ini mengatur flexbox pada section Experience agar pada saat tampilan mobile yang sempit untuk membentuk kolom dan tidak memanjang ke kanan.*/
     .experience-grid {
         grid-template-columns: 1fr;
         grid-template-areas:
@@ -290,7 +291,7 @@ h1, h2, .brand {
 }
 
 .section-header{
-    font-size: clamp(3rem, 4vw, 6rem);
+    font-size: clamp(3rem,4vw,6rem);
     margin-bottom: 35px;
 }
 
