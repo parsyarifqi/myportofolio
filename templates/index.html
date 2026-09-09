@@ -12,11 +12,11 @@
 <body>
     <header class="site-header">
         <div class="container">
-            <a href="#profile" class="brand">{{ name }}</a>
+            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
             <nav>
-                <a href="#profile">Profile</a>
+                <a href="{% url 'main:show_main' %}">Profile</a>
                 <a href="#education">Education</a>
-                <a href="#experience">Experience</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
             </nav>
         </div>
     </header>
@@ -75,29 +75,6 @@
                     <h3>SMA Negeri 1 Kota Ternate</h3>
                     <p>(2022-2023)</p>
                 </article>
-            </div>
-        </section>
-
-        <section id="experience">
-            <div class="container experience-container">
-                <h2 class="section-header">Experience</h2>
-                <div class="experience-grid">
-                    <article class="experience-item">
-                        <h3>&middot; Intern at PT. Balai Lelang Sempurna</h3>
-                        <h4>Admin Assistant</h4>
-                        <p>(July 2026 - August 2026)</p>
-                    </article>
-                    <article class="experience-item">
-                        <h3>&middot; EPT by LBI FIB UI</h3>
-                        <h4>Scored 607 (number equivalent to standarized TOEFL scores)</h4>
-                        <p>(2025)</p>
-                    </article>
-                    <article class="experience-item">
-                        <h3>&middot; National Science Olympiad in Informatics</h3>
-                        <h4>6th Place in Regency/City level</h4>
-                        <p>(2023)</p>
-                    </article>
-                </div>
             </div>
         </section>
     </main>

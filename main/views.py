@@ -21,7 +21,7 @@ def show_experience(request):
         "experience_list": Experience.objects.all(),
     }
 
-    return render(request, "experince.html", context)
+    return render(request, "experience.html", context)
 
 """Penjelasan kode:
 - Experience.objects.all() mengambil seluruh objek Experience dari basis data dalam bentuk QuerySet.

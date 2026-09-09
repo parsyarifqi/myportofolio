@@ -12,23 +12,14 @@
 <body>
     <header class="site-header">
         <div class="container">
-            <a href="#profile" class="brand">{{ name }}</a>
+            <a href="{% url 'main:show_experience' %}" class="brand">{{ name }}</a>
             <nav>
-                <a href="#profile">Profile</a>
+                <a href="{% url 'main:show_main' %}">Profile</a>
                 <a href="#education">Education</a>
-                <a href="#experience">Experience</a>
+                <a href="{% url 'main:show_experience' %}">Experience</a>
             </nav>
         </div>
     </header>
-
-
-<!--
- Perhatikan tiga bentuk sintaks baru berikut:
-
-{{ ... }} menampilkan sebuah nilai, misalnya judul pengalaman.
-{% ... %} menjalankan logika template, misalnya perulangan atau percabangan.
-{% empty %} dijalankan ketika experience_list tidak memiliki data.
- -->
 
     <main>
         <section class="experience-section" id="experience">

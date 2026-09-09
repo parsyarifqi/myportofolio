@@ -10,7 +10,8 @@ class Experience(models.Model):
         ('volunteer','Volunteer'),
         ('part-time','Part-time'),
         ('full-time','Full-time'),
-        ('freelance','Freelance')
+        ('freelance','Freelance'),
+        ('academics', 'Academics'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
