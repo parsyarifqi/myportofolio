@@ -55,3 +55,18 @@ class Experience(models.Model):
 - Decorator @property digunakan untuk membuat atribut read-only yang nilainya merupakan hasil perhitungan dari atribut lain. Dalam kasus ini, is_ongoing akan bernilai True jika ended_at adalah None.
 
 """
+
+class Education(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    institution = models.CharField(max_length=255)
+    faculty = models.CharField(max_length=255, blank=True, null=True)
+    thumbnail = models.CharField(blank=True, null=True, max_length=255)
+    started_at = models.IntegerField()
+    ended_at = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return self.institution
+    
+    @property
+    def is_ongoing(self):
+        return self.ended_at is None
