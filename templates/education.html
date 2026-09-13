@@ -30,10 +30,10 @@
                     {% for education in education_list %}
                         <article class="education-items">
                             <img class="institution-logo" src="{{ education.thumbnail }}">
-                            <h3>{{ education.institution }}</h3>
+                            <h2>{{ education.institution }}</h2>
 
                             {% if education.has_faculty %}
-                                <h4>{{ education.faculty }}</h4>
+                                <h3>{{ education.faculty }}</h3>
                             {% endif %}
 
                             {% if education.is_ongoing %}
