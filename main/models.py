@@ -69,4 +69,10 @@ class Education(models.Model):
     
     @property
     def is_ongoing(self):
-        return self.ended_at is None
+        if self.ended_at == None:
+            return True
+        return False
+
+    @property
+    def has_faculty(self):
+        return self.faculty != None

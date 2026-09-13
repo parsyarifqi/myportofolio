@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 from main.models import Experience
+from main.models import Education
 
 # Create your views here.
 
@@ -22,6 +23,14 @@ def show_experience(request):
     }
 
     return render(request, "experience.html", context)
+
+def show_education(request):
+    context = {
+        "name": "Parsya Rifqi Subhani Petrana",
+        "education_list": Education.objects.all(),
+    }
+
+    return render(request, "education.html", context)
 
 """Penjelasan kode:
 - Experience.objects.all() mengambil seluruh objek Experience dari basis data dalam bentuk QuerySet.

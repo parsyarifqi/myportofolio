@@ -194,112 +194,29 @@ h1, h2, .brand {
     }
 }
 
-#education { 
-    padding-top:36px;
-    padding-bottom:40px;
+.education-section {
+    padding: 4rem 0;
+    border-top: 1px solid var(--line)
 }
 
-.timeline-item{
-    position: relative;
-    padding-left:24px;
-    margin-bottom: 3rem;
+.education-section h1{
+    margin: 0.4rem 0 1.5rem;
+    font-size: 2rem;
+}
+
+.education-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.education-items{
+    padding: 1.25rem;
+    background-color: #fff;
+    border: 1px solid var(--line);
     border-radius: var(--radius);
 }
-
-.timeline-item::before{ /*bagian ini mengatur dot pada garis timeline yang menandakan masing masing entri.*/
-    content: "";
-    position:absolute;
-    width:12px;
-    height:12px;
-    border-radius:50%;
-    background-color:var(--accent);
-    left: 0px;
-    top:8px;
-}
-
-.timeline-item::after{ /*bagian ini mengatur garis timeline yang menyambung hingga entri terakhir*/
-    content:"";
-    position:absolute;
-    left:4.75px;
-    top: 20px;
-    width:2px;
-    height: calc(100% + 3rem);
-    background-color: var(--line);
-}
-
-.timeline-item:last-child::after{ /*bagian ini mengatur agar garis sisa pada bagian bawah timeline tidak ditampilkan.*/
-    display:none;
-}
-
-.institution-logo{ /*bagian ini mengatur margin dan juga efek gradien pada logo institusi di section education*/
-    margin-left: 20px;
-    position: absolute;
-    height: 100%;
-    -webikit-mask-image: linear-gradient(to right, black 0%, transparent 100%);
-    mask-image: linear-gradient(to right, black 0%, transparent 100%);
-    opacity: 50%;
-}
-
-.timeline-item--logo{
-    position: relative;
-}
-
-.timeline-item--logo h3,
-.timeline-item--logo h4,
-.timeline-item--logo p{
-    margin-left: 80px;
-}
-
-#experience{
-    padding-top:36px;
-    padding-bottom:40px;
-}
-
-.experience-grid{
-    display: flex;
-    grid-template-columns: repeat(2, 1fr);
-    gap:20px;
-}
-
-.experience-item{
-    padding:20px;
-    border-radius: var(--radius);
-    background-color: var(--line);
-    margin-bottom: 20px;
-    flex:1;
-}
-
-
-
-@media (max-width: 600px) { /*bagian ini mengatur flexbox pada section Experience agar pada saat tampilan mobile yang sempit untuk membentuk kolom dan tidak memanjang ke kanan.*/
-    .experience-grid {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "experience #1"
-            "experience #2"
-            "experience #3";
-        flex-direction: column;
-    }
-}
-
-.experience-item h4 {
-    color:var(--accent-dark);
-}
-
-.experience-item p {
-    color: var(--text-muted);
-}
-
-.section-header{
-    font-size: clamp(3rem,4vw,6rem);
-    margin-bottom: 35px;
-}
-
-#education h3{
-    font-size: 30px;
-}
-
-/* section tutoria-2: experience.html */
+/* section tutorial-2: experience.html */
 
 .experience-section {
     padding: 4rem 0;

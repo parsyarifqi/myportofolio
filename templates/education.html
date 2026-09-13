@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Experience - {{ name }}</title>
+    <title>Education - {{ name }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 <body>
     <header class="site-header">
         <div class="container">
-            <a href="{% url 'main:show_experience' %}" class="brand">{{ name }}</a>
+            <a href="{% url 'main:show_education' %}" class="brand">{{ name }}</a>
             <nav>
                 <a href="{% url 'main:show_main' %}">Profile</a>
                 <a href="{% url 'main:show_education' %}">Education</a>
@@ -22,31 +22,29 @@
     </header>
 
     <main>
-        <section class="experience-section" id="experience">
+        <section class="education-section" id="education">
             <div class="container">
-                <p class="section-kicker">Perjalanan saya sejauh ini</p>
-                <h1>Experience</h1>
+                <h1>Education</h1>
 
-                <div class="experience-grid">
-                    {% for experience in experience_list %}
-                        <article class="experience-card">
-                            <span class="experience-category">
-                                {{ experience.get_category_display }}
-                            </span>
-                            <h2>{{ experience.title }}</h2>
-                            <p class="experience-description">
-                                {{ experience.description }}
-                            </p>
+                <div class="education-grid">
+                    {% for education in education_list %}
+                        <article class="education-items">
+                            <img class="institution-logo" src="{{ education.thumbnail }}">
+                            <h3>{{ education.institution }}</h3>
 
-                            {% if experience.is_ongoing %}
-                                <p class="experience-status">Sedang berlangsung</p>
+                            {% if education.has_faculty %}
+                                <h4>{{ education.faculty }}</h4>
+                            {% endif %}
+
+                            {% if education.is_ongoing %}
+                                <p>{{ education.started_at}} - current</p>
                             {% else %}
-                                <p class="experience-status">Selesai</p>
+                                <p>{{ education.started_at}} - {{education.ended_at}}</p>
                             {% endif %}
                         </article>
                     {% empty %}
                         <p class="empty-state">
-                            Belum ada pengalaman yang ditambahkan.
+                            Belum ada riwayat pendidikan yang ditambahkan
                         </p>
                     {% endfor %}
                 </div>
