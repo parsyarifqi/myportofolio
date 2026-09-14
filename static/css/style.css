@@ -14,11 +14,32 @@
     --radius: 4px;
 }
 
+[data-theme="dark"] {
+    --ink: #faf6f0;
+    --paper: #1c1917;
+    --accent: #e8794f;
+    --accent-dark: #d95d39;
+    --line: #3a352e;
+    --text-muted: #a39c8f;
+}
+
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 0.4rem 0.7rem;
+    font-size: 1 rem;
+    cursor: pointer;
+}
+
+
+
 body {
     font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: var(--ink);
     background-color: var(--paper);
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, .brand {
@@ -218,7 +239,7 @@ h1, h2, .brand {
 
 .education-items{
     padding: 1.25rem;
-    background-color: #fff;
+    background-color: var(--line);
     border: 1px solid var(--line);
     border-radius: var(--radius);
 }
@@ -252,7 +273,7 @@ h1, h2, .brand {
 
 .experience-card {
     padding: 1.25rem;
-    background-color: #fff;
+    background-color: var(--line);
     border: 1px solid var(--line);
     border-radius: var(--radius);
 }
