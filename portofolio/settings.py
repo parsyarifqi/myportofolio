@@ -93,11 +93,11 @@ if PRODUCTION:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('parsya.rifqi'),
-            'USER': os.getenv('parsya.rifqi'),
-            'PASSWORD': os.getenv('mmVxZLWY'),
-            'HOST': os.getenv('10.119.106.139'),
-            'PORT': os.getenv('5432'),
+            'NAME': os.getenv('DB_NAME', 'parsya.rifqi'),
+            'USER': os.getenv('DB_USER', 'parsya.rifqi'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'mmVxZLWY'),
+            'HOST': os.getenv('DB_HOST', '10.119.106.139'),
+            'PORT': os.getenv('DB_PORT', '5432'),
             'OPTIONS': {
                 'options': f"-c search_path={os.getenv('SCHEMA', 'public')}"
             }
