@@ -2,6 +2,10 @@ from django.shortcuts import render
 
 from main.models import Experience
 from main.models import Education
+from django.contrib import messages
+from django.core import serializers
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 
 # Create your views here.
 
@@ -43,3 +47,17 @@ def show_education(request):
 
 - setiap view memiliki context sendiri, Nilai name pada show_experience dipakai oleh judul, header, dan footer halaman experience.
 """
+
+def create_project(request):
+    form = ProjectForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Experience baru berhasil ditambahkan!")
+        return redirect("main:show_projects")
+
+    context = {
+        "name": "Parsya Rifqi Subhani Petrana",
+        "form": form,
+    }
+    return render(request, "projects_form.html", context)

@@ -12,10 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
     {% block meta %} {% endblock meta %}
-
-    <!-- 
-    {% block meta %}{% endblock meta %} berguna untuk menambahkan metadata lainnya pada berkas html lain yang melakukan extend pada kerangka ini.
-     -->
 </head>
 <body>
     <header class="site-header">
@@ -37,8 +33,5 @@
         </div>
     </footer>
 
-    <!--
-    Memindahkan <header> yang berguna untuk pembuatan navbar dan <footer> yang berguna untuk pembuatan footer pada halaman web pada berkas index.html, lalu letakkan di dalam <body> pada berkas base.html. Setelah itu, pada <body> di berkas base.html, tambahkan {% block content %}{% endblock %} pada tag body yang nantinya berguna untuk mengisi konten untuk halaman webnya.
-    -->
 </body>
 </html>
