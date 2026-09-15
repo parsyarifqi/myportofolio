@@ -21,6 +21,7 @@
                 <a href="{% url 'main:show_main' %}">Profile</a>
                 <a href="{% url 'main:show_education' %}">Education</a>
                 <a href="{% url 'main:show_experience' %}">Experience</a>
+                <a href="{% url 'main:show_projects' %}">Projects</a>
                 <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
             </nav>
         </div>
@@ -35,3 +36,22 @@
 
 </body>
 </html>
+<script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>

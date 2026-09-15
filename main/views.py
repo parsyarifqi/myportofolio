@@ -2,10 +2,12 @@ from django.shortcuts import render
 
 from main.models import Experience
 from main.models import Education
+from main.models import Project
 from django.contrib import messages
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from main.forms import ProjectForm
 
 # Create your views here.
 
@@ -61,3 +63,11 @@ def create_project(request):
         "form": form,
     }
     return render(request, "projects_form.html", context)
+
+...
+def show_projects(request):
+    context = {
+        "name": "Parsya Rifqi Subhani Petrana",
+        "project_list": Project.objects.all(),
+    }
+    return render(request, "project.html", context)
