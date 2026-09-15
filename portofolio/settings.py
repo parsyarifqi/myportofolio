@@ -151,3 +151,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# gunakan https:// untuk trailing urlnya
+CSRF_TRUSTED_ORIGINS = ["https://parsya-rifqi-myportofolio.pws.cs.ui.ac.id/"]
+
+"""
+Penjelasan Kode
+
+-CSRF Token merupakan token rahasia yang sifatnya unik dan dibuat oleh server untuk melindungi aplikasi dari request yang tidak terautorisasi.
+-CSRF_TRUSTED_ORIGINS mendaftarkan URL yang sudah dipercaya untuk dapat melakukan proses request ke server.
+
+Tujuan dari penggunaan CSRF selain diwajibkan oleh Django dalam pembuatan Form adalah untuk mencegah penyerang aplikasi mengubah request yang awalnya ke server Django kalian menjadi ke suatu API yang berbahaya dan mengirimkan data request kalian ke mereka.
+"""
