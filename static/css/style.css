@@ -357,7 +357,7 @@ h1, h2, .brand {
 }
 
 .button-secondary {
-    background: var(--ink);
+    background: var(--accent);
 }
 
 
