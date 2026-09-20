@@ -1,6 +1,6 @@
 from django.forms import ModelForm, TextInput, Textarea, URLInput
 
-from main.models import Project
+from main.models import Project, Education
 
 class ProjectForm(ModelForm):
     class Meta:
@@ -60,3 +60,52 @@ Penjelasan Kode
 - fields digunakan untuk menentukan field model yang ingin ditampilkan pada form. Field dapat ditulis secara eksplisit, seperti ["title", "description"], atau menggunakan "__all__" untuk menampilkan seluruh field yang tersedia.
 - widgets digunakan untuk mengatur tampilan dan jenis elemen HTML yang digunakan oleh setiap field pada form. Pada kode di atas, TextInput digunakan untuk field teks satu baris, Textarea digunakan untuk field deskripsi yang membutuhkan area teks lebih besar, dan URLInput digunakan untuk field yang berisi URL. Atribut di dalam attrs, seperti placeholder, maxlength, dan rows, digunakan untuk teks petunjuk, batas jumlah karakter, serta tinggi area input.
 """
+
+class EducationForm(ModelForm):
+    class Meta:
+        model = Education
+        fields = [
+            "institution",
+            "faculty",
+            "thumbnail",
+            "started_at",
+            "ended_at",
+        ]
+
+        labels = {
+            "title": "Nama Institusi",
+            "faculty": "Nama Fakultas",
+            "thumbnail": "Logo institusi",
+            "started_at": "Tahun dimulainya pendidikan",
+            "ended_at": "Tahun berakhirnya pendidikan",
+        }
+
+        widgets = {
+            "title": TextInput(
+                attrs={
+                    "placeholder": "Lembaga Pendidikan",
+                    "maxlength": 255,
+                }
+            ),
+            "faculty": Textarea(
+                attrs={
+                    "placeholder": "Fakultas yang dipilih (opsional jika ada)",
+                    "rows": 3,
+                }
+            ),
+            "institution_image_url": URLInput(
+                attrs={
+                    "placeholder": "https://drive.google.com/thumbnail?id=...&sz=w1000",
+                }
+            ),
+            "started_at": TextInput(
+                attrs={
+                    "placeholder": "2026",
+                }
+            ),
+            "ended_at": TextInput(
+                attrs={
+                    "placeholder": "2026",
+                }
+            ),
+        }
