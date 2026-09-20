@@ -4,6 +4,17 @@
         <section class="education-section" id="education">
             <div class="container">
                 <h1>Education</h1>
+                <form method="get"
+                      action="{% url 'main:show_education' %}"
+                      class="project-search">
+                    <input type="search"
+                           name="institution"
+                           value="{{ institution_query }}"
+                           placeholder="Cari berdasarkan nama institusi"
+                           class="project-search__input"
+                           aria-label="Cari berdasarkan nama institusi">
+                    <button type="submit" class="button">Cari</button>
+                </form>
 
                 <div class="education-grid">
                     {% for education in education_list %}
@@ -20,6 +31,7 @@
                             {% else %}
                                 <p>{{ education.started_at}} - {{education.ended_at}}</p>
                             {% endif %}
+                            {% include "components/education_delete_modal.html" with education=education %}
                         </article>
                     {% empty %}
                         <p class="empty-state">

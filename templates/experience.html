@@ -5,7 +5,17 @@
             <div class="container">
                 <p class="section-kicker">Perjalanan saya sejauh ini</p>
                 <h1>Experience</h1>
-
+                <form method="get"
+                      action="{% url 'main:show_experience' %}"
+                      class="project-search">
+                    <input type="search"
+                           name="title"
+                           value="{{ title_query }}"
+                           placeholder="Cari berdasarkan nama pengalaman"
+                           class="project-search__input"
+                           aria-label="Cari berdasarkan nama pengalaman">
+                    <button type="submit" class="button">Cari</button>
+                </form>
                 <div class="experience-grid">
                     {% for experience in experience_list %}
                         <article class="experience-card">
@@ -22,6 +32,7 @@
                             {% else %}
                                 <p class="experience-status">Selesai</p>
                             {% endif %}
+                            {% include "components/experience_delete_modal.html" with experience=experience %}
                         </article>
                     {% empty %}
                         <p class="empty-state">

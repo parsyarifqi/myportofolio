@@ -65,3 +65,4 @@ mengerjakan pertanyaan reflektif
 21 september: menambahkan fungsi fungsi operasi CRUD (Create, Read, Update, Delete) untuk section education di views.py main
 21 september: menambahkan fungsi fungsi operasi CRUD (Create, Read, Update, Delete) untuk section education di views.py main
 21 september: memperbaiki typo dan kode yang redundan
+21 september: melakukan perubahan pada models.py Experience field started_at agar dapat diedit.
