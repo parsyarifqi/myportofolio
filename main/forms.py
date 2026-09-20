@@ -1,4 +1,4 @@
-from django.forms import ModelForm, TextInput, Textarea, URLInput
+from django.forms import ModelForm, TextInput, Textarea, URLInput, Select, DateTimeInput
 
 from main.models import Project, Education, Experience
 
@@ -73,7 +73,7 @@ class EducationForm(ModelForm):
         ]
 
         labels = {
-            "title": "Nama Institusi",
+            "institution": "Nama Institusi",
             "faculty": "Nama Fakultas",
             "thumbnail": "Logo institusi",
             "started_at": "Tahun dimulainya pendidikan",
@@ -93,7 +93,7 @@ class EducationForm(ModelForm):
                     "rows": 3,
                 }
             ),
-            "institution_image_url": URLInput(
+            "thumbnail": URLInput(
                 attrs={
                     "placeholder": "https://drive.google.com/thumbnail?id=...&sz=w1000",
                 }
@@ -151,14 +151,14 @@ class ExperienceForm(ModelForm):
                 "placeholder": "https://example.com/image.png (Opsional)"
                 }
             ),
-            "started_at": TextInput(
+            "started_at": DateTimeInput(
                 attrs={
-                    "placeholder": "2025",
+                    "type": "datetime-local",
                 }
             ),
-            "ended_at": TextInput(
+            "ended_at": DateTimeInput(
                 attrs={
-                    "placeholder": "2026",
+                    "type": "datetime-local",
                 }
             ),
         }

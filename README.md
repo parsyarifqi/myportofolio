@@ -55,3 +55,13 @@ menambahkan test case untuk modul education
 mengerjakan pertanyaan reflektif
 
 ### Tugas 2 end
+
+### Tugas 3
+
+### Progress tugas 3:
+16 september: refactor berkas html yang identik disetiap berkas html dengan meng extend ke base.html
+20 september: membuat ModelForm EducationForm untuk section Education di forms.py
+20 september: membuat ModelForm ExperienceForm untuk section Experience di forms.py
+21 september: menambahkan fungsi fungsi operasi CRUD (Create, Read, Update, Delete) untuk section education di views.py main
+21 september: menambahkan fungsi fungsi operasi CRUD (Create, Read, Update, Delete) untuk section education di views.py main
+21 september: memperbaiki typo dan kode yang redundan

@@ -106,7 +106,7 @@ def create_education(request):
 
 
 def show_education(request):
-    json_response = get_projects_json(request)
+    json_response = get_education_json(request)
 
     educations = serializers.deserialize(
         "json",
@@ -127,7 +127,7 @@ def get_education_json(request):
     institutions = Education.objects.all()
 
     if institution_query:
-        institutions = institutions.filter(title__icontains=institution_query)
+        institutions = institutions.filter(institution__icontains=institution_query)
 
     institutions_json = serializers.serialize("json", institutions)
     return HttpResponse(institutions_json, content_type="application/json")
