@@ -8,6 +8,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from main.forms import ProjectForm, EducationForm, ExperienceForm
+from django.forms import ModelForm, TextInput, Textarea, URLInput, Select
 
 # Create your views here.
 
@@ -22,21 +23,6 @@ def show_main(request):
 
     return render(request, "index.html", context)
 
-def show_experience(request):
-    context = {
-        "name": "Parsya Rifqi Subhani Petrana",
-        "experience_list": Experience.objects.all(),
-    }
-
-    return render(request, "experience.html", context)
-
-def show_education(request):
-    context = {
-        "name": "Parsya Rifqi Subhani Petrana",
-        "education_list": Education.objects.all(),
-    }
-
-    return render(request, "education.html", context)
 
 """Penjelasan kode:
 - Experience.objects.all() mengambil seluruh objek Experience dari basis data dalam bentuk QuerySet.
@@ -141,12 +127,12 @@ def get_education_json(request):
     institutions = Education.objects.all()
 
     if institution_query:
-        institutions = projects.filter(title__icontains=institution_query)
+        institutions = institutions.filter(title__icontains=institution_query)
 
     institutions_json = serializers.serialize("json", institutions)
     return HttpResponse(institutions_json, content_type="application/json")
 
-def delete_project(request, education_id):
+def delete_education(request, education_id):
     education = get_object_or_404(Education, pk=education_id)
 
     if request.method == "POST":
@@ -174,7 +160,7 @@ def create_experience(request):
 
 
 def show_experience(request):
-    json_response = get_experiences_json(request)
+    json_response = get_experience_json(request)
 
     experiences = serializers.deserialize(
         "json",
