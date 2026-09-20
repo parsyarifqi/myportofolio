@@ -144,9 +144,11 @@ class ExperienceForm(ModelForm):
                     "rows": 3,
                 }
             ),
-             "thumbnail": URLInput(
-                attrs={
-                    "placeholder": "https://drive.google.com/thumbnail?id=...&sz=w1000",
+            "category": Select(
+                attrs={"class": "form-control"}),
+                "thumbnail": URLInput(attrs={
+                "class": "form-control", 
+                "placeholder": "https://example.com/image.png (Opsional)"
                 }
             ),
             "started_at": TextInput(

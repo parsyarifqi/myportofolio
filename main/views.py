@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from main.forms import ProjectForm
+from main.forms import ProjectForm, EducationForm, ExperienceForm
 
 # Create your views here.
 
@@ -55,7 +55,7 @@ def create_project(request):
 
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Experience baru berhasil ditambahkan!")
+        messages.success(request, "Project baru berhasil ditambahkan!")
         return redirect("main:show_projects")
 
     context = {
@@ -101,3 +101,57 @@ def delete_project(request, project_id):
         return redirect("main:show_projects")
 
     return redirect("main:show_projects")
+
+
+#education
+def create_education(request):
+    form = EducationForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Education baru berhasil ditambahkan!")
+        return redirect("main:show_education")
+
+    context = {
+        "name": "Parsya Rifqi Subhani Petrana",
+        "form": form,
+    }
+    return render(request, "education_form.html", context)
+
+
+def show_education(request):
+    json_response = get_projects_json(request)
+
+    educations = serializers.deserialize(
+        "json",
+        json_response.content.decode("utf-8"),
+    )
+    educations = [education.object for education in educations]
+    institution_query = request.GET.get("institution", "").strip()
+
+    context = {
+        "name": "Parsya Rifqi Subhani Petrana",
+        "education_list": educations,
+        "institution_query": institution_query,
+    }
+    return render(request, "education.html", context)
+
+def get_education_json(request):
+    institution_query = request.GET.get("institution", "").strip()
+    institutions = Education.objects.all()
+
+    if institution_query:
+        institutions = projects.filter(title__icontains=institution_query)
+
+    institutions_json = serializers.serialize("json", institutions)
+    return HttpResponse(institutions_json, content_type="application/json")
+
+def delete_project(request, education_id):
+    education = get_object_or_404(Education, pk=education_id)
+
+    if request.method == "POST":
+        education.delete()
+        messages.success(request, "Education berhasil dihapus!")
+        return redirect("main:show_education")
+
+    return redirect("main:show_education")
