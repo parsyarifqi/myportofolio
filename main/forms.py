@@ -93,7 +93,7 @@ class EducationForm(ModelForm):
                     "rows": 3,
                 }
             ),
-            "thumbnail": URLInput(
+            "thumbnail": TextInput(
                 attrs={
                     "placeholder": "https://drive.google.com/thumbnail?id=...&sz=w1000",
                 }
