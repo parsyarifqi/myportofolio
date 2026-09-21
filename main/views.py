@@ -88,6 +88,25 @@ def delete_project(request, project_id):
 
     return redirect("main:show_projects")
 
+def update_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Project berhasil diperbaharui")
+            return redirect('main:show_projects')
+    else:
+        form = ProjectForm(instance=project)
+    
+    context = {
+        'form': form,
+        'project': project,  
+        'name': 'Parsya Rifqi Subhani Petrana',
+    }
+    return render(request, "update_project.html", context)
+
 
 #education
 def create_education(request):
@@ -142,6 +161,26 @@ def delete_education(request, education_id):
 
     return redirect("main:show_education")
 
+def update_education(request, education_id):
+    education = get_object_or_404(Education, pk=education_id)
+    
+    if request.method == 'POST':
+        form = EducationForm(request.POST, instance=education)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Educaiton berhasil diperbaharui")
+            return redirect('main:show_education')
+    else:
+        form = EducationForm(instance=education)
+    
+    context = {
+        'form': form,
+        'education': education,  
+        'name': 'Parsya Rifqi Subhani Petrana',
+    }
+    return render(request, "update_education.html", context)
+
+
 
 #experience
 def create_experience(request):
@@ -195,3 +234,22 @@ def delete_experience(request, experience_id):
         return redirect("main:show_experience")
 
     return redirect("main:show_experience")
+
+def update_experience(request, experience_id):
+    experience = get_object_or_404(Experience, pk=experience_id)
+    
+    if request.method == 'POST':
+        form = ExperienceForm(request.POST, instance=experience)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Experience berhasil diperbaharui")
+            return redirect('main:show_experience')
+    else:
+        form = ExperienceForm(instance=experience)
+    
+    context = {
+        'form': form,
+        'experience': experience,  
+        'name': 'Parsya Rifqi Subhani Petrana',
+    }
+    return render(request, "update_experience.html", context)

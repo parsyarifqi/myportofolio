@@ -39,6 +39,7 @@
                                 <p>{{ education.started_at}} - {{education.ended_at}}</p>
                             {% endif %}
                             {% include "components/education_delete_modal.html" with education=education %}
+                            <a href="{% url 'main:update_education' education.id %}" class="button">Edit</a>
                         </article>
                     {% empty %}
                         <p class="empty-state">

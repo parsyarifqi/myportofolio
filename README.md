@@ -67,3 +67,4 @@ mengerjakan pertanyaan reflektif
 21 september: memperbaiki typo dan kode yang redundan
 21 september: melakukan perubahan pada models.py Experience field started_at agar dapat diedit.
 21 september: menambahkan fitur untuk mencari dan menghapus data pada section education dan experience.
+21 september: menambahkan fitur untuk menambahkan data pada section education dan experience
