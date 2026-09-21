@@ -3,7 +3,14 @@
     <main>
         <section class="education-section" id="education">
             <div class="container">
-                <h1>Education</h1>
+                <div class="project-header">
+                    <h1>Education</h1>
+                    <a href="{% url 'main:create_education' %}"
+                       class="button project-add-button">
+                        <span aria-hidden="true">+</span>
+                        Tambah Education
+                    </a>
+                </div>
                 <form method="get"
                       action="{% url 'main:show_education' %}"
                       class="project-search">
