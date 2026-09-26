@@ -287,3 +287,31 @@ Penjelasan Kode
 
 Form autentikasi sudah tersedia, jadi main/forms.py tidak perlu diubah. ProjectForm yang kamu buat sebelumnya tetap dipakai untuk proyek.
 """
+
+def login_user(request):
+    form =  AuthenticationForm(request, data= request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        login(request, form.get_user())
+        return redirect("main:show_main")
+    
+    context = {
+        "name" : "Parsya Rifqi Subhani Petrana",
+        "form" : form,
+    }
+
+    return render (request, "login.html", context)
+
+"""
+Penjelasan Kode
+
+- AuthenticationForm menerima request sebagai argumen pertama dan data input melalui argumen data. is_valid() memeriksa kredensial menggunakan sistem autentikasi Django.
+
+- Setelah validasi berhasil, form.get_user() memberikan objek pengguna yang sudah terautentikasi. Kita tidak perlu memanggil authenticate() lagi.
+
+- login(request, user) mencatat pengguna dalam session. Pada permintaan berikutnya, Django dapat mengenali pengguna lewat request.user.
+
+- Fungsi view diberi nama login_user agar tidak menimpa fungsi login yang kita impor.
+
+- Implementasi ini selalu mengarahkan pengguna ke halaman profil setelah login. Parameter next belum diproses.
+"""
