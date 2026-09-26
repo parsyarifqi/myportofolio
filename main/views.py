@@ -13,16 +13,19 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import redirect, render
+import datetime
 
 # Create your views here.
 
 def show_main(request):
+    last_login = request.COOKIES.get('lasat_login', 'belum ada sesi login / Cookie tidak ditemukan')
     context = {
         "name": "Parsya Rifqi Subhani Petrana",
         "npm": "2506535992",
         "study_program": "S1 Ilmu Komputer",
         "bio": ("Undergraduate Student at University of Indonesia Majoring in Computer Science. My interest includes AI, Data Engineering, and Machine Learning. Currently based in Depok, West Java, Indonesia."
-        )
+        ),
+        "last_login": last_login,
     }
 
     return render(request, "index.html", context)
@@ -38,6 +41,10 @@ def show_main(request):
 - show_main mengirim data profil ke index.html, dan show_experience mengirimkan data experience ke experience.html.
 
 - setiap view memiliki context sendiri, Nilai name pada show_experience dipakai oleh judul, header, dan footer halaman experience.
+
+- request.COOKIES.get('last_login', ...) membaca nilai dari cookie bernama last_login. Kita menggunakan method .get() dengan nilai default agar aplikasi tidak melempar error (KeyError) jika pengunjung membuka halaman utama sebelum login atau jika cookie belum tersedia
+
+- Nilai string tanggal tersebut kita masukkan ke dalam dictionary context dengan kunci "last_login".
 """
 
 def create_project(request):
@@ -289,12 +296,13 @@ Form autentikasi sudah tersedia, jadi main/forms.py tidak perlu diubah. ProjectF
 """
 
 def login_user(request):
-    form =  AuthenticationForm(request, data= request.POST or None)
+    form =  AuthenticationForm(request, data=request.POST or None)
 
     if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
-        return redirect("main:show_main")
-    
+        response = redirect("main:show_main")
+        response.set_cookie('last_login', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        return response
     context = {
         "name" : "Parsya Rifqi Subhani Petrana",
         "form" : form,
@@ -314,6 +322,12 @@ Penjelasan Kode
 - Fungsi view diberi nama login_user agar tidak menimpa fungsi login yang kita impor.
 
 - Implementasi ini selalu mengarahkan pengguna ke halaman profil setelah login. Parameter next belum diproses.
+
+- Di baris response = redirect("main:show_main"), fungsi redirect() menghasilkan objek HttpResponseRedirect.
+
+- Pada objek response tersebut, kita memanggil method .set_cookie(key, value). Method ini akan menambahkan header HTTP Set-Cookie: last_login=... pada paket respons yang dikirimkan ke browser.
+
+- Format waktu kita seragamkan menggunakan format YYYY-MM-DD HH:MM:SS agar rapi dan mudah dibaca oleh pengguna.
 """
 
 def logout_user(request):
