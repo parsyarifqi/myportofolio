@@ -18,7 +18,7 @@ import datetime
 # Create your views here.
 
 def show_main(request):
-    last_login = request.COOKIES.get('lasat_login', 'belum ada sesi login / Cookie tidak ditemukan')
+    last_login = request.COOKIES.get('last_login', 'belum ada sesi login / Cookie tidak ditemukan')
     context = {
         "name": "Parsya Rifqi Subhani Petrana",
         "npm": "2506535992",
@@ -296,19 +296,20 @@ Form autentikasi sudah tersedia, jadi main/forms.py tidak perlu diubah. ProjectF
 """
 
 def login_user(request):
-    form =  AuthenticationForm(request, data=request.POST or None)
+    form = AuthenticationForm(request, data=request.POST or None)
 
     if request.method == "POST" and form.is_valid():
-        login(request, form.get_user())
+        user = form.get_user()
+        login(request, user)
         response = redirect("main:show_main")
         response.set_cookie('last_login', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         return response
-    context = {
-        "name" : "Parsya Rifqi Subhani Petrana",
-        "form" : form,
-    }
 
-    return render (request, "login.html", context)
+    context = {
+        "name": "Burhan",
+        "form": form,
+    }
+    return render(request, "login.html", context)
 
 """
 Penjelasan Kode
@@ -332,8 +333,14 @@ Penjelasan Kode
 
 def logout_user(request):
     logout(request)
-    return redirect("main:show_main")
+    response = redirect("main:show_main")
+    response.delete_cookie('last_login')
+    return response
 """
-logout(request) menghapus data session saat ini, lalu pengguna diarahkan ke halaman profil. Akunnya tetap ada di database dan dapat digunakan untuk login kembali.
+- logout(request) menghapus data session saat ini, lalu pengguna diarahkan ke halaman profil. Akunnya tetap ada di database dan dapat digunakan untuk login kembali.
+
+- response.delete_cookie('last_login') menyisipkan header HTTP pada respons yang menginstruksikan browser klien untuk segera menghapus cookie last_login dari penyimpanannya.
+
+- Ketika kamu diarahkan kembali ke halaman utama setelah logout, request.COOKIES.get('last_login') tidak lagi menemukan cookie tersebut, sehingga teks default akan ditampilkan.
 """
 
