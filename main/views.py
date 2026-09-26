@@ -9,6 +9,10 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from main.forms import ProjectForm, EducationForm, ExperienceForm
 from django.forms import ModelForm, TextInput, Textarea, URLInput, Select
+from django.contrib import messages
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.shortcuts import redirect, render
 
 # Create your views here.
 
@@ -253,3 +257,33 @@ def update_experience(request, experience_id):
         'name': 'Parsya Rifqi Subhani Petrana',
     }
     return render(request, "update_experience.html", context)
+
+
+def register(request):
+    form = UserCreationForm(request.POST or None)
+
+    if request.method ==  "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Akun berhasil dibuat. Silakan  login.")
+        return redirect("main:login")
+
+    context = {
+        "name" : "Parsya Rifqi Subhani Petrana",
+        "form" : form,
+    }
+    return render(request, "register.html", context)
+
+"""
+Penjelasan Kode
+
+-Pada permintaan GET, form kosong ditampilkan. Pada POST, form menerima data dari request.POST.
+
+-UserCreationForm menyediakan username, password1, dan password2. is_valid() memeriksa username, kecocokan kedua password, dan aturan password dari konfigurasi proyek.
+ 
+-form.save() membuat akun dengan password yang sudah di-hash. Registrasi tidak langsung membuat pengguna login; pengguna
+ diarahkan ke halaman login.
+- Jika validasi gagal, form yang sama dirender kembali agar pesan kesalahannya bisa dibaca.
+- messages.success() menyiapkan pesan untuk ditampilkan setelah pengalihan. Nilai name tetap nama pemilik portofolio; ganti Burhan dengan namamu sendiri.
+
+Form autentikasi sudah tersedia, jadi main/forms.py tidak perlu diubah. ProjectForm yang kamu buat sebelumnya tetap dipakai untuk proyek.
+"""
