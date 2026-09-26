@@ -109,6 +109,7 @@ def delete_project(request, project_id):
 
     return redirect("main:show_projects")
 
+@login_required(login_url="/login/")
 def update_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     
@@ -191,6 +192,7 @@ def delete_education(request, education_id):
 
     return redirect("main:show_education")
 
+@login_required(login_url="/login/")
 def update_education(request, education_id):
     education = get_object_or_404(Education, pk=education_id)
     
@@ -273,6 +275,7 @@ def delete_experience(request, experience_id):
 
     return redirect("main:show_experience")
 
+@login_required(login_url="/login/")
 def update_experience(request, experience_id):
     experience = get_object_or_404(Experience, pk=experience_id)
     

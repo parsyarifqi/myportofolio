@@ -5,11 +5,13 @@
             <div class="container">
                 <div class="project-header">
                     <h1>Education</h1>
+                    {% if user.is_superuser %}
                     <a href="{% url 'main:create_education' %}"
                        class="button project-add-button">
                         <span aria-hidden="true">+</span>
                         Tambah Education
                     </a>
+                    {% endif %}
                 </div>
                 <form method="get"
                       action="{% url 'main:show_education' %}"
@@ -38,8 +40,10 @@
                             {% else %}
                                 <p>{{ education.started_at}} - {{education.ended_at}}</p>
                             {% endif %}
-                            {% include "components/education_delete_modal.html" with education=education %}
-                            <a href="{% url 'main:update_education' education.id %}" class="button">Edit</a>
+                            {% if user.is_superuser %}
+                                {% include "components/education_delete_modal.html" with education=education %}
+                                <a href="{% url 'main:update_education' education.id %}" class="button">Edit</a>
+                            {% endif %}
                         </article>
                     {% empty %}
                         <p class="empty-state">
