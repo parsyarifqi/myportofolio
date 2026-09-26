@@ -374,3 +374,24 @@ def logout_user(request):
 - Ketika kamu diarahkan kembali ke halaman utama setelah logout, request.COOKIES.get('last_login') tidak lagi menemukan cookie tersebut, sehingga teks default akan ditampilkan.
 """
 
+@login_required(login_url="/login")
+def toggle_star(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    if request.method == "POST":
+        if request.user in project.starred_by.all():
+            project.starred_by.remove(request.user)
+        else:
+            project.starred_by.add(request.user)
+    
+    return redirect("main:show_projects")
+
+"""
+Penjelasan Kode
+
+- Fungsi ini memakai @login_required tanpa pemeriksaan is_superuser. Pengguna terdaftar mana pun boleh memberi star; yang tidak boleh hanya pengunjung yang belum punya akun.
+
+- project.starred_by.add(...) dan .remove(...) menambah dan menghapus baris di tabel penghubung. Memanggil .add() dua kali untuk pengguna yang sama tidak membuat data ganda.
+
+- Pemeriksaan request.method == "POST" memastikan data hanya berubah lewat pengiriman form, bukan karena alamatnya kebetulan dibuka di browser.
+"""
