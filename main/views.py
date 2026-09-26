@@ -315,3 +315,11 @@ Penjelasan Kode
 
 - Implementasi ini selalu mengarahkan pengguna ke halaman profil setelah login. Parameter next belum diproses.
 """
+
+def logout_user(request):
+    logout(request)
+    return redirect("main:show_main")
+"""
+logout(request) menghapus data session saat ini, lalu pengguna diarahkan ke halaman profil. Akunnya tetap ada di database dan dapat digunakan untuk login kembali.
+"""
+
