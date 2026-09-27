@@ -14,7 +14,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import redirect, render
 import datetime
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied 
 # Create your views here.
 
@@ -49,6 +49,7 @@ def show_main(request):
 """
 
 @login_required(login_url="/login/")
+@permission_required("main.create_project", raise_exception=True)
 def create_project(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -96,6 +97,7 @@ def get_projects_json(request):
 
 
 @login_required(login_url="/login/")
+@permission_required("main.delete_project", raise_exception=True)
 def delete_project(request, project_id):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -132,6 +134,7 @@ def update_project(request, project_id):
 
 #education
 @login_required(login_url="/login/")
+@permission_required("main.create_education", raise_exception=True)
 def create_education(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -179,6 +182,7 @@ def get_education_json(request):
 
 
 @login_required(login_url="/login/")
+@permission_required("main.delete_education", raise_exception=True)
 def delete_education(request, education_id):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -216,6 +220,7 @@ def update_education(request, education_id):
 
 #experience
 @login_required(login_url="/login/")
+@permission_required("main.create_experience", raise_exception=True)
 def create_experience(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -262,6 +267,7 @@ def get_experience_json(request):
     return HttpResponse(experiences_json, content_type="application/json")
 
 @login_required(login_url="/login/")
+@permission_required("main.delete_experience", raise_exception=True)
 def delete_experience(request, experience_id):
     if not request.user.is_superuser:
         raise PermissionDenied
