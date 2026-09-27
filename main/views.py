@@ -5,7 +5,7 @@ from main.models import Education
 from main.models import Project
 from django.contrib import messages
 from django.core import serializers
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from main.forms import ProjectForm, EducationForm, ExperienceForm
 from django.forms import ModelForm, TextInput, Textarea, URLInput, Select
@@ -49,7 +49,7 @@ def show_main(request):
 """
 
 @login_required(login_url="/login/")
-@permission_required("main.create_project", raise_exception=True)
+@permission_required("main.add_project", raise_exception=True)
 def create_project(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -112,6 +112,7 @@ def delete_project(request, project_id):
     return redirect("main:show_projects")
 
 @login_required(login_url="/login/")
+@permission_required("main.change_project", raise_exception=True)
 def update_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     
@@ -134,7 +135,7 @@ def update_project(request, project_id):
 
 #education
 @login_required(login_url="/login/")
-@permission_required("main.create_education", raise_exception=True)
+@permission_required("main.add_education", raise_exception=True)
 def create_education(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -197,6 +198,7 @@ def delete_education(request, education_id):
     return redirect("main:show_education")
 
 @login_required(login_url="/login/")
+@permission_required("main.change_education", raise_exception=True)
 def update_education(request, education_id):
     education = get_object_or_404(Education, pk=education_id)
     
@@ -220,7 +222,7 @@ def update_education(request, education_id):
 
 #experience
 @login_required(login_url="/login/")
-@permission_required("main.create_experience", raise_exception=True)
+@permission_required("main.add_experience", raise_exception=True)
 def create_experience(request):
     if not request.user.is_superuser:
         raise PermissionDenied
@@ -282,6 +284,7 @@ def delete_experience(request, experience_id):
     return redirect("main:show_experience")
 
 @login_required(login_url="/login/")
+@permission_required("main.change_experience", raise_exception=True)
 def update_experience(request, experience_id):
     experience = get_object_or_404(Experience, pk=experience_id)
     
@@ -380,17 +383,32 @@ def logout_user(request):
 - Ketika kamu diarahkan kembali ke halaman utama setelah logout, request.COOKIES.get('last_login') tidak lagi menemukan cookie tersebut, sehingga teks default akan ditampilkan.
 """
 
+MODEL_MAP = {
+    "project" : Project,
+    "experience" : Experience,
+}
+
 @login_required(login_url="/login")
-def toggle_star(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
+def toggle_star(request, model_name, object_id):
+    model = MODEL_MAP.get(model_name)
+
+    if model is None:
+        raise Http404("model not recognized")
+    
+    obj = get_object_or_404(model, pk=object_id)
 
     if request.method == "POST":
-        if request.user in project.starred_by.all():
-            project.starred_by.remove(request.user)
+        if request.user in obj.starred_by.all():
+            obj.starred_by.remove(request.user)
         else:
-            project.starred_by.add(request.user)
+            obj.starred_by.add(request.user)
     
-    return redirect("main:show_projects")
+    return_view = {
+        "project" : "main:show_projects",
+        "experience" : "main:show_experience"
+    }
+    
+    return redirect(return_view.get(model_name))
 
 """
 Penjelasan Kode

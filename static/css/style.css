@@ -582,7 +582,7 @@ h1, h2, .brand {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    background: var(--ink);
+    background: #1c1917;
 }
 
 .button-star.is-starred {
