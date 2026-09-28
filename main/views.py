@@ -92,7 +92,7 @@ def get_projects_json(request):
     if title_query:
         projects = projects.filter(title__icontains=title_query)
 
-    projects_json = serializers.serialize("json", projects,fields=["title","description","tech_stack","project_url","project_image_url"])
+    projects_json = serializers.serialize("json", projects,fields=["title","description","tech_stack","project_url","project_image_url"],use_natural_foreign_keys=True)
     return HttpResponse(projects_json, content_type="application/json")
 
 
@@ -179,7 +179,7 @@ def get_education_json(request):
     if institution_query:
         institutions = institutions.filter(institution__icontains=institution_query)
 
-    institutions_json = serializers.serialize("json", institutions)
+    institutions_json = serializers.serialize("json", institutions, use_natural_foreign_keys=True)
     return HttpResponse(institutions_json, content_type="application/json")
 
 
@@ -266,7 +266,7 @@ def get_experience_json(request):
     if title_query:
         experiences = experiences.filter(title__icontains=title_query)
 
-    experiences_json = serializers.serialize("json", experiences, fields=["title","description","category","thumbnail","started_at","ended_at"])
+    experiences_json = serializers.serialize("json", experiences, fields=["title","description","category","thumbnail","started_at","ended_at"], use_natural_foreign_keys=True)
     return HttpResponse(experiences_json, content_type="application/json")
 
 @login_required(login_url="/login/")
