@@ -109,7 +109,8 @@ def delete_project(request, project_id):
         messages.success(request, "Project berhasil dihapus!")
         return redirect("main:show_projects")
 
-    return redirect("main:show_projects")
+    return redirect("main" \
+    ":show_projects")
 
 @login_required(login_url="/login/")
 @permission_required("main.change_project", raise_exception=True)

@@ -106,3 +106,44 @@ merge branch to main agar sinkron dengan branch utama
 
 
 ### Tugas 3 End ###
+
+### Tugas 4 ###
+
+### -AI DISCLOSURE-:
+Saya menyatakan bahwa pengerjaan individual assignemnt 4 ini saya kerjakan menggunakan AI Claude. Saya menggunakan AI Claude untuk melakukan proses debug, meminta penjelasan, serta untuk penerapan javascript pada bagian menu drawer. Berikut adalah penjelasan dari chat Claude AI yang saya gunakan dalam pengerjaan tugas ini tentang bagaimana saya menggunakannya:
+
+Ringkasan penggunaan AI (Claude) dalam pengerjaan tugas ini:
+
+Peran saya di sini sebagai asisten yang menjelaskan dan membantu debugging. Kode proyeknya, keputusan desainnya, dan pengujian di browser tetap kamu yang pegang.
+
+"**Yang saya lakukan:**
+- **Menjelaskan kode.** Template register, cara kerja `{% for field in form %}`, dan alur `show_projects` sampai `get_projects_json`.
+- **Membantu debugging.** Error `accounts/login/` (perlu `LOGIN_URL`), permission `update_project` yang seharusnya `change_project`, `NoReverseMatch` dan `TypeError` pada `toggle_star`, serta warna link navbar yang jadi ungu.
+- **Memberi saran arsitektur.** Satu view `toggle_star` generik untuk project dan experience, dasar-dasar role/group/permission dan server-side check, whitelist `fields` di serializer agar `starred_by` tidak bocor, dan off-canvas menu untuk navbar.
+- **Menulis contoh kode.** Potongan HTML, CSS, JS, dan Python yang kamu adaptasi ke proyekmu.
+
+**Yang tidak saya lakukan:**
+- Saya tidak menjalankan kode kamu. Semua diagnosis berdasarkan potongan kode dan screenshot yang kamu kirim, jadi beberapa masih tebakan. Contohnya, saya kurang yakin penyebab tombol star yang awalnya tidak berubah warna. Kamu bilang sudah jadi, tapi kita tidak pernah memastikan sebabnya.
+- Saya tidak mengetahui rubrik tugasmu. Poin soal integritas API saya jawab dari kacamata praktik keamanan umum, bukan dari kriteria penilaian aslinya.
+- Beberapa saran saya juga meleset. Misalnya saya mengira error `redirect` berasal dari `HTTP_REFERER`, padahal kamu tidak pernah menunjukkan kodenya memakai itu. Kamu yang menguji dan menyesuaikan sampai jalan."
+
+untuk link percakapan AI Claude yang saya gunakan: https://claude.ai/share/35e8456d-6bf6-45bf-8829-33b7aebb43ea
+
+### Instruksi setup mingguan:
+membuat branch baru sesuai dengan tugas/tutorial yang diberikan
+menjalankan virtual environment
+melakukan instruksi yang diberikan tugas atau tutorial dan commit berkala
+melakukan makemigrations dan migrate apabila terdapat perubahan pada struktur data yang disimpan
+merge branch to main agar sinkron dengan branch utama
+
+### Progress Mingguan
+27 september: menambahkan role editor via django admin 
+27 september: permission_required(main.view_function, raise_exception=True) untuk fungsi views yang melakukan operasi CRUD
+27 septemeber: mengubah view toggle_star agar dapat menghandle fungsi star untuk experience agar menghindari redundansi kode
+27 september: membuat templates/componenets/experience_star.html yang menghandle fungsi star
+27 septemeber: menambahkan tombol star pada section experience
+27 september: mengeksklusi field starred_by pada model Project dan Experience untuk mencegah tereksposnya data ID akun pengguna yang melakukan star pada project atau experience saat melakukan serialize ke json
+28 septemeber: membuat side drawer dengan javascript untuk menampung menu yang awalnya di navbar agar navbar tidak terlalu overcrowded.
+
+
+### Tugas 4 End ###
