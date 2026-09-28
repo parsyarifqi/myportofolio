@@ -17,22 +17,37 @@
     <header class="site-header">
         <div class="container">
             <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
-            <nav>
+            <nav class="main-nav">
                 <a href="{% url 'main:show_main' %}">Profile</a>
                 <a href="{% url 'main:show_education' %}">Education</a>
                 <a href="{% url 'main:show_experience' %}">Experience</a>
                 <a href="{% url 'main:show_projects' %}">Projects</a>
-                {% if user.is_authenticated %}
-                    <span class="nav-user">{{ user.username }}</span>
-                    <a href="{% url 'main:logout' %}">Logout</a>
-                {% else %}
-                    <a href="{% url 'main:login' %}">Login</a>
-                    <a href="{% url 'main:register' %}">Register</a>
-                {% endif %}
-                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+                <button type="button" class="menu-toggle" id="menu-toggle" aria-label="Buka menu" aria-expanded="false" aria-controls="side-menu">☰</button>
             </nav>
         </div>
     </header>
+
+    <div class="side-menu-overlay" id="side-menu-overlay"></div>
+
+    <aside class="side-menu" id="side-menu" aria-hidden="true">
+        <button type="button" class="side-menu__close" id="menu-close" aria-label="Tutup menu">×</button>
+
+        <nav class="side-menu__nav">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">🌙  Switch Theme</button>
+            <a href="{% url 'main:show_main' %}">Profile</a>
+            <a href="{% url 'main:show_education' %}">Education</a>
+            <a href="{% url 'main:show_experience' %}">Experience</a>
+            <a href="{% url 'main:show_projects' %}">Projects</a>
+            {% if user.is_authenticated %}
+                <span class="nav-user">{{ user.username }}</span>
+                <a href="{% url 'main:logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'main:login' %}">Login</a>
+                <a href="{% url 'main:register' %}">Register</a>
+            {% endif %}
+
+        </nav>
+    </aside>
     {% block content %} {% endblock content %}
 
     <footer class="site-footer">
@@ -60,5 +75,24 @@
                 document.documentElement.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
             }
+        });
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuClose = document.getElementById('menu-close');
+        const sideMenu = document.getElementById('side-menu');
+        const overlay = document.getElementById('side-menu-overlay');
+
+        function setMenu(open) {
+            sideMenu.classList.toggle('is-open', open);
+            overlay.classList.toggle('is-open', open);
+            menuToggle.setAttribute('aria-expanded', open);
+            sideMenu.setAttribute('aria-hidden', !open);
+        }
+
+        menuToggle.addEventListener('click', () => setMenu(true));
+        menuClose.addEventListener('click', () => setMenu(false));
+        overlay.addEventListener('click', () => setMenu(false));
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') setMenu(false);
         });
     </script>

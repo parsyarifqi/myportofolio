@@ -345,7 +345,7 @@ def login_user(request):
         return response
 
     context = {
-        "name": "Burhan",
+        "name": "Parsya Rifqi Subhani Petrana",
         "form": form,
     }
     return render(request, "login.html", context)
