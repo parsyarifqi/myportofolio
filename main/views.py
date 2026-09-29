@@ -5,7 +5,7 @@ from main.models import Education
 from main.models import Project
 from django.contrib import messages
 from django.core import serializers
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from main.forms import ProjectForm, EducationForm, ExperienceForm
 from django.forms import ModelForm, TextInput, Textarea, URLInput, Select
@@ -92,8 +92,31 @@ def get_projects_json(request):
     if title_query:
         projects = projects.filter(title__icontains=title_query)
 
-    projects_json = serializers.serialize("json", projects,fields=["title","description","tech_stack","project_url","project_image_url"],use_natural_foreign_keys=True)
-    return HttpResponse(projects_json, content_type="application/json")
+    data = []
+    for project in projects:
+        starred_user = project.starred_by.all()
+        is_starred = request.user in starred_user if request.user.is_authenticated else False
+        starred_by_names = ", ".join([u.username for u in starred_user])
+
+        data.append({
+            "pk" : str(project.id),
+            "fields" : {
+                "title" : project.title,
+                "description" : project.description,
+                "tech_stack" : project.tech_stack,
+                "project_url" : project.project_url,
+                "project_image_url" : project.project_image_url,
+                "star_count" : starred_user.count(),
+                "is_starred" : is_starred,
+                "starred_by_names" : starred_by_names,
+            }
+        })
+    
+    return JsonResponse(data, safe=False)
+
+"""
+Kode di atas menggunakan perulangan untuk mengubah setiap objek Project menjadi sebuah dictionary. Di dalam perulangan tersebut, kita juga memeriksa apakah request.user ada di dalam daftar akun yang memberi star pada proyek tersebut (is_starred) dan menghitung total star. JsonResponse kemudian mengirimkan data utuh ini ke browser.
+"""
 
 
 @login_required(login_url="/login/")
