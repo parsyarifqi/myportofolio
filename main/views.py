@@ -3,6 +3,7 @@ from django.shortcuts import render
 from main.models import Experience
 from main.models import Education
 from main.models import Project
+from main.forms import ProjectForm
 from django.contrib import messages
 from django.core import serializers
 from django.http import Http404, HttpResponse, JsonResponse
@@ -74,6 +75,7 @@ def show_projects(request):
     context = {
         "name": "Parsya Rifqi Subhani Petrana",
         "title_query": title_query,
+        "form" : ProjectForm(),
     }
     return render(request, "project.html", context)
 """
