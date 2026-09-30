@@ -247,6 +247,81 @@
             document.getElementById("add-project-modal").hidePopover();
         }
 
+        const CREATE_PROJECT_ENDPOINT = "{% url 'main:create_project_ajax' %}";
+        const projectForm = document.getElementById('project-form');
+
+        // Membaca nilai cookie, digunakan untuk mengambil token CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Mengirim data form ke server
+        async function addProject(event) {
+            event.preventDefault();
+
+            const submitButton = projectForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch(CREATE_PROJECT_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                    body: new FormData(projectForm),
+                });
+                const result = await response.json().catch(() => ({}));
+
+                if (response.ok) {
+                    projectForm.reset();
+                    closeProjectModal();
+                    showToast('Berhasil', 'Proyek baru berhasil ditambahkan!', 'success');
+                    fetchProjects(searchInput.value.trim());
+                } else {
+                    const errorMessages = result.errors
+                        ? Object.values(result.errors).flat().map(error => error.message)
+                        : [result.message || `Terjadi kesalahan (status ${response.status}).`];
+                    showToast('Gagal menambahkan proyek', errorMessages.join(' '), 'error');
+                }
+            } catch (error) {
+                console.error('Error adding project:', error);
+                showToast('Gagal menambahkan proyek', 'Tidak dapat terhubung ke server. Silakan coba lagi.', 'error');
+            } finally {
+                submitButton.disabled = false;
+            }
+        }
+
+        if (projectForm) {
+            projectForm.addEventListener('submit', addProject);
+        }
+        /*
+        Penjelasan Kode
+
+        - Modal hanya disertakan untuk superuser sehingga bagi pengunjung lain projectForm bernilai null. Pemeriksaan if (projectForm) mencegah addEventListener memicu error yang akan menghentikan sisa skrip, termasuk pemanggilan fetchProjects(). Dengan begitu, daftar proyek tetap tampil untuk semua pengunjung.
+
+        - getCookie adalah fungsi pembaca cookie yang sudah kita bahas secara konseptual di Tutorial 04. Kini kita benar-benar menggunakannya untuk mengambil token dari cookie csrftoken dan mengirimkannya lewat header X-CSRFToken. CsrfViewMiddleware menerima token dari header ini atau dari field csrfmiddlewaretoken di dalam form (yang juga ikut terkirim lewat FormData). Permintaan tanpa salah satunya ditolak dengan status 403 Forbidden.
+
+        - new FormData(projectForm) mengumpulkan seluruh isi input di dalam form berdasarkan atribut name-nya. Data tersebut dikirim dengan format multipart/form-data, dan Django tetap membacanya lewat request.POST sehingga data dapat divalidasi oleh ProjectForm.
+
+        - event.preventDefault() mencegah browser mengirim form dengan cara biasa (yang akan me-reload halaman). Pengiriman diambil alih sepenuhnya oleh fetch.
+
+        - Tombol submit dinonaktifkan selama permintaan berjalan agar proyek yang sama tidak tersimpan dua kali ketika tombol diklik berulang kali. Blok finally mengaktifkannya kembali, baik permintaan berhasil maupun gagal.
+
+        - response.ok bernilai true untuk status 2xx. Jika berhasil, form dikosongkan, modal ditutup, toast sukses ditampilkan, dan fetchProjects() dipanggil ulang dengan kata kunci pencarian yang sedang aktif sehingga proyek baru langsung muncul jika sesuai dengan kata kunci tersebut.
+
+        - Jika gagal, pesan kesalahan dari server ditampilkan lewat toast. .catch(() => ({})) pada response.json() menangani respons yang bukan JSON (misalnya halaman HTML 403 dari kegagalan CSRF) agar tetap ditampilkan sebagai pesan dengan kode statusnya.
+        */
+
+
         // Start application
         fetchProjects(searchInput.value.trim());
     </script>
