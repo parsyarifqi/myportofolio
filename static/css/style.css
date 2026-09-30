@@ -393,6 +393,7 @@ h1, h2, .brand {
     display: block;
     margin-bottom: 0.4rem;
     font-weight: 700;
+    color: var(--ink);
 }
 
 .form-group input,
@@ -661,6 +662,7 @@ h1, h2, .brand {
     margin: 0 2.5rem 1.25rem 0;
     font-family: "Space Grotesk", -apple-system, sans-serif;
     font-size: 1.5rem;
+    color: var(--ink);
 }
 
 .project-form-modal__close {

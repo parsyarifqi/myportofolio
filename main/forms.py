@@ -2,6 +2,9 @@ from django.forms import ModelForm, TextInput, Textarea, URLInput, Select, DateT
 
 from main.models import Project, Education, Experience
 
+from django.core.exceptions import ValidationError
+from django.utils.html import strip_tags
+
 class ProjectForm(ModelForm):
     class Meta:
         model = Project
@@ -50,6 +53,29 @@ class ProjectForm(ModelForm):
                 }
             ),
         }
+    def clean_title(self):
+        title = strip_tags(self.cleaned_data["title"]).strip()
+        if not title:
+            raise ValidationError("Nama proyek tidak boleh hanya berisi tag HTML.")
+        return title
+
+    def clean_tech_stack(self):
+        return strip_tags(self.cleaned_data["tech_stack"]).strip()
+
+    def clean_description(self):
+        return strip_tags(self.cleaned_data["description"]).strip()
+
+"""
+Penjelasan Kode
+
+- Method dengan pola nama clean_<nama_field> dijalankan otomatis oleh Django saat form.is_valid() dipanggil, setelah validasi bawaan field tersebut lolos. Nilai yang dikembalikan menggantikan isi cleaned_data untuk field itu, dan nilai inilah yang disimpan oleh form.save().
+
+- strip_tags menghapus semua tag HTML dari teks sehingga Halo <b>dunia</b> disimpan sebagai Halo dunia.
+
+- clean_title menolak judul yang menjadi kosong setelah tag dihapus, misalnya payload <img ...> tadi, dan pesan kesalahannya akan tampil di toast.
+
+Karena create_project dan create_project_ajax sama-sama memakai ProjectForm, pembersihan ini berlaku untuk kedua jalur penambahan proyek sekaligus.
+"""
 
 """
 ModelForm adalah builtins library yang telah disediakan oleh Django untuk membuat boilerplate suatu form. Struktur dari form sendiri dapat dikustomasi menggunakan metadata atau class Meta.
