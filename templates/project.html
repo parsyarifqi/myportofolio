@@ -100,6 +100,8 @@
         const gridContainer = document.getElementById('grid');
         const searchForm = document.getElementById('project-search-form');
         const searchInput = document.getElementById('search-input');
+        const SEARCH_DEBOUNCE_DELAY = 300;
+        let searchDebounceTimer;
     
         // Menyembunyikan/Menampilkan section halaman
         function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
@@ -210,10 +212,35 @@
         }
     
         // Event Handlers untuk Form Search
-        searchForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Mencegah reload halaman
-            fetchProjects(searchInput.value.trim()); // Jalankan pencarian via AJAX
+        function searchProjects() {
+            fetchProjects(searchInput.value.trim());
+        }
+
+        searchInput.addEventListener("input", function() {
+            clearTimeout(searchDebounceTimer);
+
+            searchDebounceTimer = setTimeout(function() {
+                searchProjects();
+            }, SEARCH_DEBOUNCE_DELAY);
         });
+
+        searchForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            clearTimeout(searchDebounceTimer);
+            searchProjects();
+        });
+
+        /*
+        Penjelasan Kode:
+
+        - clearTimeout(searchDebounceTimer) membatalkan timer dari karakter sebelumnya. Saat pengguna mengetik huruf berikutnya, waktu tunggu selalu dihitung ulang dari awal.
+
+        - setTimeout() menyimpan fungsi pencarian untuk dijalankan setelah SEARCH_DEBOUNCE_DELAY milidetik. Fungsi pencarian tersebut hanya benar-benar berjalan apabila tidak ada input baru sebelum waktunya habis.
+
+        - Fungsi searchProjects() digunakan oleh dua event handler agar logika pencarian tidak ditulis dua kali.
+
+        - Event submit tetap dipertahankan. Tombol Cari dan tombol Enter terlebih dahulu membatalkan timer yang mungkin masih menunggu, lalu langsung menjalankan pencarian.
+        */
     
         // Start application
         fetchProjects(searchInput.value.trim());
