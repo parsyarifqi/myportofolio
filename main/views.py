@@ -17,6 +17,7 @@ from django.shortcuts import redirect, render
 import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import PermissionDenied 
+from django.views.decorators.http import require_POST
 # Create your views here.
 
 def show_main(request):
@@ -67,6 +68,24 @@ def create_project(request):
         "form": form,
     }
     return render(request, "projects_form.html", context)
+
+@require_POST
+def create_project_ajax(request):
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message": "Hanya pemilik portofolio yang dapat menambahkan proyek."},
+            status=403,
+        )
+
+    form = ProjectForm(request.POST)
+    if form.is_valid():
+        project = form.save()
+        return JsonResponse(
+            {"message": "Proyek berhasil ditambahkan.", "pk": str(project.id)},
+            status=201,
+        )
+
+    return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
 
 
 def show_projects(request):
