@@ -5,22 +5,22 @@
 }
 
 :root {
-    --ink: #1c1917;
-    --paper: #faf6f0;
-    --accent: #d95d39;
-    --accent-dark: #a8442a;
-    --line: #e3d9c9;
-    --text-muted: #6b6459;
+--ink: #112D4E;        /* Biru paling gelap untuk teks utama */
+    --paper: #F9F7F7;      /* Putih keabu-abuan untuk background */
+    --accent: #3F72AF;     /* Biru medium untuk tombol/link */
+    --accent-dark: #2A5282; /* Turunan lebih gelap dari accent untuk efek hover */
+    --line: #DBE2EF;       /* Biru sangat muda untuk garis pembatas/border */
+    --text-muted: #6B829E; /* Biru keabu-abuan untuk teks sekunder */
     --radius: 4px;
 }
 
 [data-theme="dark"] {
-    --ink: #faf6f0;
-    --paper: #1c1917;
-    --accent: #e8794f;
-    --accent-dark: #d95d39;
-    --line: #3a352e;
-    --text-muted: #a39c8f;
+    --ink: #F9F7F7;        
+    --paper: #071524;      /* Midnight Navy: Jauh lebih pekat, hampir hitam tapi tetap ada tint biru */
+    --accent: #5E8BC2;     
+    --accent-dark: #3F72AF; 
+    --line: #112D4E;       /* Warna tergelap dari palet asli Anda kini turun pangkat jadi garis pembatas */
+    --text-muted: #9BB0C9; /* Diredupkan sedikit agar mata tidak lelah saat membaca di background pekat */
 }
 
 .theme-toggle {
@@ -266,6 +266,7 @@ h1, h2, .brand {
     object-fit: cover;
     border-radius: var(--radius);
     border: 3px solid var(--ink);
+    background-color: var(--accent-dark);
 }
 
 .site-footer {
