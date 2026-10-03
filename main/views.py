@@ -103,7 +103,7 @@ Karena data sekarang diambil mandiri oleh JavaScript, view yang bertugas menampi
 
 def get_projects_json(request):
     title_query = request.GET.get("title", "").strip()
-    projects = Project.objects.all()
+    projects = Project.objects.prefetch_related('starred_by').all()
 
     if title_query:
         projects = projects.filter(title__icontains=title_query)
@@ -280,6 +280,27 @@ def create_experience(request):
     }
     return render(request, "experience_form.html", context)
 
+def create_experience_ajax(request):
+    
+    if not request.user.is_superuser:
+        return JsonResponse(
+            {"message":"Hanya pemiliki portofolio yang dapat menambahkan pengalaman."}, 
+            status=403,
+        )
+    
+    form = ExperienceForm(request.POST)
+    if form.is_valid():
+        experience = form.save()
+        return JsonResponse(
+            {"message":"Pengalaman berhasil ditambahkan.",
+            "pk":str(experience.id)},
+            status=201,
+        )
+    
+    return JsonResponse(
+        {"errors":"form.errors.get_json_data()",},
+        status=400,
+    )
 
 def show_experience(request):
     json_response = get_experience_json(request)

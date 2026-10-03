@@ -47,41 +47,6 @@
 
                 <!-- Project Grid -->
                 <div id="grid" class="experience-grid project-grid hide"></div>
-
-                <div class="experience-grid project-grid">
-                    {% for project in project_list %}
-                        <article class="experience-card">
-                            {% if project.project_image_url %}
-                                <img src="{{ project.project_image_url }}"
-                                     alt="Gambar {{ project.title }}"
-                                     class="project-image">
-                            {% endif %}
-                            <h2>{{ project.title }}</h2>
-                            <span class="experience-category">{{ project.tech_stack }}</span>
-                            <p class="experience-description">{{ project.description }}</p>
-                            <div class="project-card-actions">
-                                <div class="project-actions">
-                                    {% if project.project_url %}
-                                        <a href="{{ project.project_url }}" class="button">Lihat Project</a>
-                                    {% endif %}
-                                    {% include "components/project_star.html" with project=project %}
-                                    {% if user.is_superuser %}
-                                        {% include "components/project_delete_modal.html" with project=project %}
-                                    {% endif %}
-                                    {% if perms.main.change_project %}
-                                        <a href="{% url 'main:update_project' project.id %}" class="button">Edit</a>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </article>
-                    {% empty %}
-                        {% if title_query %}
-                            <p class="empty-state">Tidak ada proyek dengan nama tersebut.</p>
-                        {% else %}
-                            <p class="empty-state">Belum ada proyek yang ditambahkan.</p>
-                        {% endif %}
-                    {% endfor %}
-                </div>
             </div>
         </section>
     </main>
@@ -92,6 +57,7 @@
         // Konfigurasi
         const BASE_PROJECTS_ENDPOINT = "{% url 'main:get_projects_json' %}";
         const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
+        const CAN_CHANGE_PROJECT = "{{ perms.main.change_project|yesno:'true,false' }}" === "true";
         let projectsAbortController;
     
         // Elemen DOM
@@ -126,7 +92,10 @@
         function buildProjectCardElement(item) {
             const project = item.fields;
             const projectId = item.pk;
-    
+            const edit_Url = "{% url 'main:update_project' '00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000', projectId);
+
+            const editHtml = CAN_CHANGE_PROJECT ? `<a href="${edit_Url}" class="button">Edit</a>`:'';
+
             const articleElement = document.createElement('article');
             articleElement.className = 'experience-card';
     
@@ -179,6 +148,7 @@
                         </form>
     
                         ${deleteHtml}
+                        ${editHtml}
                     </div>
                 </div>
             `;
