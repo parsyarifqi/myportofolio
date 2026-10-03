@@ -71,6 +71,7 @@ def create_project(request):
 
 @require_POST
 def create_project_ajax(request):
+
     if not request.user.is_superuser:
         return JsonResponse(
             {"message": "Hanya pemilik portofolio yang dapat menambahkan proyek."},
@@ -303,31 +304,43 @@ def create_experience_ajax(request):
     )
 
 def show_experience(request):
-    json_response = get_experience_json(request)
-
-    experiences = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-    experiences = [experience.object for experience in experiences]
     title_query = request.GET.get("title", "").strip()
 
     context = {
         "name": "Parsya Rifqi Subhani Petrana",
-        "experience_list": experiences,
         "title_query": title_query,
     }
     return render(request, "experience.html", context)
 
 def get_experience_json(request):
     title_query = request.GET.get("title", "").strip()
-    experiences = Experience.objects.all()
+    experiences = Experience.objects.prefetch_related('starred_by').all()
 
     if title_query:
         experiences = experiences.filter(title__icontains=title_query)
 
-    experiences_json = serializers.serialize("json", experiences, fields=["title","description","category","thumbnail","started_at","ended_at"], use_natural_foreign_keys=True)
-    return HttpResponse(experiences_json, content_type="application/json")
+    data = []
+
+    for experience in experiences:
+        starred_user = experience.starred_by.all()
+        is_starred = request.user in starred_user if request.user.is_authenticated else False
+        starred_by_names = ", ".join([e.experience for e in starred_user])
+
+        data.append({
+            "pk" : str(experience.id),
+            "fields" : {
+                "title" : experience.title,
+                "description" : experience.description,
+                "category" : experience.category,
+                "thumbnail" : experience.thumbnail,
+                "started_at" : experience.started_at,
+                "ended_at" : experience.ended_at,
+                "starred_by_names" : starred_by_names,
+            }
+        })
+        
+    
+    return JsonResponse(data, safe=False)
 
 @login_required(login_url="/login/")
 @permission_required("main.delete_experience", raise_exception=True)
