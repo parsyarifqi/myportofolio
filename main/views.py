@@ -281,6 +281,7 @@ def create_experience(request):
     }
     return render(request, "experience_form.html", context)
 
+@require_POST
 def create_experience_ajax(request):
     
     if not request.user.is_superuser:
@@ -309,6 +310,7 @@ def show_experience(request):
     context = {
         "name": "Parsya Rifqi Subhani Petrana",
         "title_query": title_query,
+        "form": ExperienceForm()
     }
     return render(request, "experience.html", context)
 
@@ -324,7 +326,7 @@ def get_experience_json(request):
     for experience in experiences:
         starred_user = experience.starred_by.all()
         is_starred = request.user in starred_user if request.user.is_authenticated else False
-        starred_by_names = ", ".join([e.experience for e in starred_user])
+        starred_by_names = ", ".join([e.username for e in starred_user])
 
         data.append({
             "pk" : str(experience.id),
@@ -335,6 +337,7 @@ def get_experience_json(request):
                 "thumbnail" : experience.thumbnail,
                 "started_at" : experience.started_at,
                 "ended_at" : experience.ended_at,
+                "star_count" : starred_user.count(),
                 "starred_by_names" : starred_by_names,
             }
         })
