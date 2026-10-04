@@ -180,7 +180,8 @@ class ExperienceForm(ModelForm):
             "started_at": DateTimeInput(
                 attrs={
                     "type": "datetime-local",
-                }
+                },
+                format='%Y-%m-%dT%H:%M',
             ),
             "ended_at": DateTimeInput(
                 attrs={
