@@ -116,12 +116,20 @@
             const starTitle = experience.star_count > 0
             ? `Dibintangi oleh ${escapeHtml(experience.starred_by_names)}`
             : "Jadilah yang pertama memberi star";
+
+            const isOngoing = !experience.ended_at
+            const statusText = isOngoing ? 'Sedang Berlangsung' : 'Selesai';
     
             // Komponen card
             const completeCardHtml = `
                 ${imageHtml}
+                <span class="experience-category">
+                    ${escapeHtml(experience.category)}
+                </span>
                 <h2>${escapeHtml(experience.title)}</h2>
-                <p class="experience-description">${escapeHtml(experience.description)}</p>
+                <p class="experience-description">
+                    ${escapeHtml(experience.description)}</p>
+                <p class="experience-status">${escapeHtml(statusText)}</p>
                 <div class="project-card-actions">
                     <div class="project-actions"> 
                         <form method="post" action="${starUrl}" class="star-form">

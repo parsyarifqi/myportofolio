@@ -286,7 +286,7 @@ def create_experience_ajax(request):
     
     if not request.user.is_superuser:
         return JsonResponse(
-            {"message":"Hanya pemiliki portofolio yang dapat menambahkan pengalaman."}, 
+            {"message":"Hanya pemilik portofolio yang dapat menambahkan pengalaman."}, 
             status=403,
         )
     
@@ -300,7 +300,7 @@ def create_experience_ajax(request):
         )
     
     return JsonResponse(
-        {"errors":"form.errors.get_json_data()",},
+        {"errors":form.errors.get_json_data(),},
         status=400,
     )
 
@@ -328,6 +328,7 @@ def get_experience_json(request):
         is_starred = request.user in starred_user if request.user.is_authenticated else False
         starred_by_names = ", ".join([e.username for e in starred_user])
 
+
         data.append({
             "pk" : str(experience.id),
             "fields" : {
@@ -339,6 +340,7 @@ def get_experience_json(request):
                 "ended_at" : experience.ended_at,
                 "star_count" : starred_user.count(),
                 "starred_by_names" : starred_by_names,
+                "is_starred" : is_starred,
             }
         })
         
@@ -465,7 +467,7 @@ MODEL_MAP = {
     "experience" : Experience,
 }
 
-@login_required(login_url="/login")
+@login_required(login_url="/login/")
 def toggle_star(request, model_name, object_id):
     model = MODEL_MAP.get(model_name)
 
