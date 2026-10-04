@@ -62,6 +62,7 @@ class ProjectForm(ModelForm):
     def clean_tech_stack(self):
         return strip_tags(self.cleaned_data["tech_stack"]).strip()
 
+
     def clean_description(self):
         return strip_tags(self.cleaned_data["description"]).strip()
 
@@ -107,7 +108,7 @@ class EducationForm(ModelForm):
         }
 
         widgets = {
-            "title": TextInput(
+            "institution": TextInput(
                 attrs={
                     "placeholder": "Lembaga Pendidikan",
                     "maxlength": 255,
@@ -186,6 +187,16 @@ class ExperienceForm(ModelForm):
             "ended_at": DateTimeInput(
                 attrs={
                     "type": "datetime-local",
-                }
+                },
+                format='%Y-%m-%dT%H:%M',
             ),
         }
+
+    def clean_title(self):
+        title = strip_tags(self.cleaned_data["title"]).strip()
+        if not title:
+            raise ValidationError("Nama pengalaman tidak boleh hanya berisi tag HTML.")
+        return title
+    
+    def clean_description(self):
+        return strip_tags(self.cleaned_data["description"]).strip()
