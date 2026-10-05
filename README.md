@@ -144,3 +144,15 @@ merge branch to main agar sinkron dengan branch utama
 
 ### -AI DISCLOSURE-:
 Saya menyatakan bahwa pengerjaan tugas individu 5 ini saya kerjakan dengan menggunakan bantuan AI. Strategi penggunaan AI saya adalah dengan mengirimkan soal yang diberikan lalu memintanya untuk membuat struktur pengerjaan yang bertahap dan jelas. Selain itu saya juga menggunakan AI untuk proses debug dan mencari error. Selain itu AI juga saya pergunakan sebagai tracker sejauh mana progress pengerjaan tugas saya dan mengecek apakah ada requirement dari soal yang belum dikerjakan. Untuk chat AI yang saya gunakan: https://claude.ai/share/7ab74af2-b6eb-46bc-a13e-0124dedad028 
+
+### Progress Mingguan:
+3 oktober: Memperbarui tampilan web dengan color scheme baru
+4 oktober: menambahkan fungsi create_experience_ajax dan memperbaiki bug tombol edit yang tidak muncul pada user dengan permission di project
+4 oktober: menyederhanakan main/views.py bagian show_experience yang sekarang tidak perlu menghandle JSON karena sudah dihandle oleh javascript dan fungsi get_experience_json merakit sendiri respon json dan tidak menggunakan serialize.
+4 oktober: menyesuaikan template experience.html untuk menambpilkan data dengan AJAX
+4 oktober: menambahkan komponen template experience_form_modal.html untuk menghandle update experience dan minor bug fix
+4 oktober: memperbaiki bug kategori dan status experience yang tidak ditampilkan pada experience card.
+5 oktober: menbambahkan proteksi terhadap xss dengan menambahkan fungsi clean_title dan clean_description yang menstrip tag html pada input form
+5 oktober: menjawab pertanyaan reflektif nomor 2, serta navbar kini di set untuk mode scroll saat overflow
+5 oktober: menjawab pertanyaan reflektif no.3 dan memperbaiki kesalahan pada README.md
+5 oktober: menambahkan AI Disclosure dan progress mingguan.
