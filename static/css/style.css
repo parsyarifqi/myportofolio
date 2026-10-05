@@ -75,6 +75,7 @@ h1, h2, .brand {
     display: flex;
     align-items: center;
     gap: 2rem;
+    overflow: scroll;
 }
 
 .main-nav a {

@@ -60,7 +60,7 @@ mengerjakan pertanyaan reflektif
 
 ### Tugas 2 end
 
-### Tugas 3
+### Tugas 3 ###
 
 ### Pertanyaan Reflektif:
 1. Karena penggunaan ModelForm menghubungkan langsung form dengan Model maka kita tidak perlu membuat field html secara manual karena ModelForm sudah mebuat field yang sesuai dengan Model secara otomatis, selain itu kita tidak perlu melakukan seluruh proses validasi data karena ModelForm melalui form.is_valid sudah melakukan validasi secara otomatis. Penggunaan {% csrf_token %} mencegah terjadinya Cross-Site Request Forgery dimana penyerang mengirimkan request dari sesi pengguna yang terautentikasi untuk melakukan tindakan yang tidak diinginkan. Csrf token adalah string acak yang unik yang dibuat pada saat halaman dimuat. Csrf harus diikutsertakan sebagai bentuk verifikasi saat pengguna ingin mengirim data. Server akan mencocokkan token csrf yang diterima dengan token yang disimpan di sesi pengguna. Jika token yang diterima cocok barulah pengiriman data oleh pengguna akan diterima oleh server.
@@ -147,3 +147,10 @@ merge branch to main agar sinkron dengan branch utama
 
 
 ### Tugas 4 End ###
+
+### Tugas 5 ###
+
+### Pertanyaan Reflektif:
+1. Debouncing adalah teknik menunda mengirim request selama batas waktu tertentu. Ketika user melakukan suatu aksi seperti mengetik input, maka setiap user memasukkan karakter maka timer timeout akan dimulai selama batas waktu yang telah ditentukan, apabila user tidak melakukan aksi lain hingga waktu timeout selesai barulah request ajax akan dikirimkan. Teknik ini penting dieterapkan pada fitur pencarian yang mengguanakan AJAX karena tanpa teknik ini maka setiap kali user memasukkan input akan dilakukan reques, ini menciptakan banyak request yang redundan dan membebani server. Dengan adanya debouncing ini maka request hanya akan dikirim setelah user berhenti melakukan suatu aksi dalam waktu yang telah di atur.
+
+2. cara kerja asynchronous bisa diibaratkan seperti sebuah branch yang dijalankan secara terpisah dari alur program utama. Ketika fungsi asynchronous dijalankan maka fungsi akan memproses promise (data yang diproses) tanpa mengganggu alur program utama. Jadi program utama dapat terus berjalan dan user bisa melakukan action lain selagi fungsi async memproses promise. await menghentikan proses async, fungsi async harus menunggu proses await selesai dijalankan, setelah await selesai, maka hasil dari await bisa digunakan untuk memproses promise.
