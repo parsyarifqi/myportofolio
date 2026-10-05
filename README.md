@@ -145,6 +145,14 @@ merge branch to main agar sinkron dengan branch utama
 ### -AI DISCLOSURE-:
 Saya menyatakan bahwa pengerjaan tugas individu 5 ini saya kerjakan dengan menggunakan bantuan AI. Strategi penggunaan AI saya adalah dengan mengirimkan soal yang diberikan lalu memintanya untuk membuat struktur pengerjaan yang bertahap dan jelas. Selain itu saya juga menggunakan AI untuk proses debug dan mencari error. Selain itu AI juga saya pergunakan sebagai tracker sejauh mana progress pengerjaan tugas saya dan mengecek apakah ada requirement dari soal yang belum dikerjakan. Untuk chat AI yang saya gunakan: https://claude.ai/share/7ab74af2-b6eb-46bc-a13e-0124dedad028 
 
+
+### Instruksi setup mingguan:
+membuat branch baru sesuai dengan tugas/tutorial yang diberikan
+menjalankan virtual environment
+melakukan instruksi yang diberikan tugas atau tutorial dan commit berkala
+melakukan makemigrations dan migrate apabila terdapat perubahan pada struktur data yang disimpan
+merge branch to main agar sinkron dengan branch utama
+
 ### Progress Mingguan:
 3 oktober: Memperbarui tampilan web dengan color scheme baru
 4 oktober: menambahkan fungsi create_experience_ajax dan memperbaiki bug tombol edit yang tidak muncul pada user dengan permission di project
@@ -156,3 +164,7 @@ Saya menyatakan bahwa pengerjaan tugas individu 5 ini saya kerjakan dengan mengg
 5 oktober: menjawab pertanyaan reflektif nomor 2, serta navbar kini di set untuk mode scroll saat overflow
 5 oktober: menjawab pertanyaan reflektif no.3 dan memperbaiki kesalahan pada README.md
 5 oktober: menambahkan AI Disclosure dan progress mingguan.
+5 oktober: menghapus tombol test notifikasi toast pada section project dan menambahkan instruksi setup mingguan.
+5 oktober: menambahkan Instruksi setup mingguan.
+
+### Tugas 5 End ###
