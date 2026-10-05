@@ -110,22 +110,7 @@ merge branch to main agar sinkron dengan branch utama
 ### Tugas 4 ###
 
 ### -AI DISCLOSURE-:
-Saya menyatakan bahwa pengerjaan individual assignemnt 4 ini saya kerjakan menggunakan AI Claude. Saya menggunakan AI Claude untuk melakukan proses debug, meminta penjelasan, serta untuk penerapan javascript pada bagian menu drawer. Berikut adalah penjelasan dari chat Claude AI yang saya gunakan dalam pengerjaan tugas ini tentang bagaimana saya menggunakannya:
-
-Ringkasan penggunaan AI (Claude) dalam pengerjaan tugas ini:
-
-Peran saya di sini sebagai asisten yang menjelaskan dan membantu debugging. Kode proyeknya, keputusan desainnya, dan pengujian di browser tetap kamu yang pegang.
-
-"**Yang saya lakukan:**
-- **Menjelaskan kode.** Template register, cara kerja `{% for field in form %}`, dan alur `show_projects` sampai `get_projects_json`.
-- **Membantu debugging.** Error `accounts/login/` (perlu `LOGIN_URL`), permission `update_project` yang seharusnya `change_project`, `NoReverseMatch` dan `TypeError` pada `toggle_star`, serta warna link navbar yang jadi ungu.
-- **Memberi saran arsitektur.** Satu view `toggle_star` generik untuk project dan experience, dasar-dasar role/group/permission dan server-side check, whitelist `fields` di serializer agar `starred_by` tidak bocor, dan off-canvas menu untuk navbar.
-- **Menulis contoh kode.** Potongan HTML, CSS, JS, dan Python yang kamu adaptasi ke proyekmu.
-
-**Yang tidak saya lakukan:**
-- Saya tidak menjalankan kode kamu. Semua diagnosis berdasarkan potongan kode dan screenshot yang kamu kirim, jadi beberapa masih tebakan. Contohnya, saya kurang yakin penyebab tombol star yang awalnya tidak berubah warna. Kamu bilang sudah jadi, tapi kita tidak pernah memastikan sebabnya.
-- Saya tidak mengetahui rubrik tugasmu. Poin soal integritas API saya jawab dari kacamata praktik keamanan umum, bukan dari kriteria penilaian aslinya.
-- Beberapa saran saya juga meleset. Misalnya saya mengira error `redirect` berasal dari `HTTP_REFERER`, padahal kamu tidak pernah menunjukkan kodenya memakai itu. Kamu yang menguji dan menyesuaikan sampai jalan."
+Saya menyatakan bahwa pengerjaan individual assignemnt 4 ini saya kerjakan menggunakan AI Claude. Saya menggunakan AI Claude untuk melakukan proses debug, meminta penjelasan, serta untuk penerapan javascript pada bagian menu drawer.
 
 untuk link percakapan AI Claude yang saya gunakan: https://claude.ai/share/35e8456d-6bf6-45bf-8829-33b7aebb43ea
 
@@ -153,4 +138,9 @@ merge branch to main agar sinkron dengan branch utama
 ### Pertanyaan Reflektif:
 1. Debouncing adalah teknik menunda mengirim request selama batas waktu tertentu. Ketika user melakukan suatu aksi seperti mengetik input, maka setiap user memasukkan karakter maka timer timeout akan dimulai selama batas waktu yang telah ditentukan, apabila user tidak melakukan aksi lain hingga waktu timeout selesai barulah request ajax akan dikirimkan. Teknik ini penting dieterapkan pada fitur pencarian yang mengguanakan AJAX karena tanpa teknik ini maka setiap kali user memasukkan input akan dilakukan reques, ini menciptakan banyak request yang redundan dan membebani server. Dengan adanya debouncing ini maka request hanya akan dikirim setelah user berhenti melakukan suatu aksi dalam waktu yang telah di atur.
 
-2. cara kerja asynchronous bisa diibaratkan seperti sebuah branch yang dijalankan secara terpisah dari alur program utama. Ketika fungsi asynchronous dijalankan maka fungsi akan memproses promise (data yang diproses) tanpa mengganggu alur program utama. Jadi program utama dapat terus berjalan dan user bisa melakukan action lain selagi fungsi async memproses promise. await menghentikan proses async, fungsi async harus menunggu proses await selesai dijalankan, setelah await selesai, maka hasil dari await bisa digunakan untuk memproses promise.
+2. fungsi await akan membuat alur fungsi async berhenti sejenak untuk menunggu proses fetch() selesai dijalankan. fetch() sendiri mengembalikan promise yang akan diisi setelah proses fetch() selesai. tanpa menggunakan await maka data yang dibutuhkan tidak tersedia hingga proses fetch selesai. Jika program terus berjalan tanpa menunggu proses fetch selesai maka jika dalam waktu tersebut program membutuhkan data yang sedang diproses oleh fetch maka data teresebut belum tersedia dan hanya berupa promise bukan data yang sebenarnya.
+
+3. XSS atau Cross-Site Scripting adalah jenis serangan dimana penyerang mengirimkan script javascript yang tidak diinginkan kedalam web melalui browser korban. pada template django, django akan secara otomatis melakukan escaping dan mengubah karakter yang rentan menjadi HTML entity. Namun jika menggunakan AJAX/Javascript, escaping ini perlu diterapkan secara manual karena jika tidak maka website menjadi rentan terhadap serangan xss karena data biasanya dikirim sebagai JSON mentah sehingga jika javascript memasukkan data tersebut kedalam web dengan innerHTML maka browser akan menganggapnya sebagai html yang sah dan menjalankan payload.
+
+### -AI DISCLOSURE-:
+Saya menyatakan bahwa pengerjaan tugas individu 5 ini saya kerjakan dengan menggunakan bantuan AI. Strategi penggunaan AI saya adalah dengan mengirimkan soal yang diberikan lalu memintanya untuk membuat struktur pengerjaan yang bertahap dan jelas. Selain itu saya juga menggunakan AI untuk proses debug dan mencari error. Selain itu AI juga saya pergunakan sebagai tracker sejauh mana progress pengerjaan tugas saya dan mengecek apakah ada requirement dari soal yang belum dikerjakan. Untuk chat AI yang saya gunakan: https://claude.ai/share/7ab74af2-b6eb-46bc-a13e-0124dedad028 
