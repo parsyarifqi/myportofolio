@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include,path
 from main.views import show_main, show_experience, create_experience, get_experience_json, delete_experience, update_experience, show_education, create_education, get_education_json, update_education, delete_education, create_project, show_projects, get_projects_json, delete_project, update_project, register, login_user, logout_user, toggle_star, create_project_ajax, create_experience_ajax
 
 app_name = "main"
@@ -28,6 +28,10 @@ urlpatterns = [
     path("experience/add-ajax/", create_experience_ajax, name="create_experience_ajax"),
 ]
 
+urlpatterns += [
+    path("api/v1/", include("main.api_urls")),
+    path("api-auth/", include("rest_framework.urls")),
+]
 
 """
 Penjelasan kode:
