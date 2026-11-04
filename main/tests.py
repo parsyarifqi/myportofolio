@@ -15,6 +15,7 @@ class MainTest(TestCase):
             title="PT. Balai Lelang Sempurna",
             description="Admin Assistant",
             category="internship",
+            started_at='2025-08-19 00:00:00',
         )
 
         self.education = Education.objects.create(
