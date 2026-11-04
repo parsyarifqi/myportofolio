@@ -53,3 +53,21 @@ def project_detail(request, project_id):
     serializer.is_valid(raise_exception=True)
     serializer.save()
     return Response(serializer.data)
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication])
+@permission_classes([IsAuthenticated])
+def project_star(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    if project.starred_by.filter(pk=request.user.pk).exists():
+        project.starred_by.remove(request.user)
+    else:
+        project.starred_by.add(request.user)
+    serializer = ProjectSerializer(project, context={"request": request})
+    return Response(serializer.data)
+
+"""
+IsAuthenticated membatasi endpoint ini ke akun login, termasuk pengguna biasa. Akun yang memberi star selalu berasal dari request.user; request tidak boleh memilih ID pengguna lain. Relasi starred_by yang sudah ada tetap dipakai. Method .add() dan .remove() mengubah relasi tanpa membuat model baru.
+
+Endpoint ini adalah toggle: dua POST berturut-turut berarti memberi lalu membatalkan star. Karena itu, frontend nanti menonaktifkan tombol selama request berlangsung dan tidak melakukan retry otomatis. Satu pengguna tetap hanya memiliki satu relasi star ke satu proyek.
+"""
