@@ -1,7 +1,4 @@
 from django.test import TestCase
-
-# Create your tests here.
-from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
@@ -24,6 +21,14 @@ class MainTest(TestCase):
             thumbnail="/static/img/fasilkom.png",
             started_at=2025,
         )
+
+    def get_api_json(self, url_name):
+        """Mengambil daftar data dari API sebagai JSON (data kini tidak lagi ada di HTML)."""
+        response = self.client.get(reverse(url_name), HTTP_ACCEPT="application/json")
+        self.assertEqual(response.status_code, 200)
+        return response.json()
+
+    # ----- Tidak terpengaruh perubahan DRF -----------------------------
 
     def test_main_url_is_accessible(self):
         response = self.client.get(reverse("main:show_main"))
@@ -49,15 +54,18 @@ class MainTest(TestCase):
         self.assertEqual(self.education.faculty, "Computer Science")
         self.assertTrue(self.education.is_ongoing)
 
+    # ----- Halaman: kini hanya kerangka, data diambil lewat API --------
+
     def test_experience_page(self):
         response = self.client.get(reverse("main:show_experience"))
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "experience.html")
-        self.assertContains(response, self.experience.title)
-        self.assertContains(response, self.experience.description)
-        self.assertContains(response, "Internship")
-        self.assertContains(response, "Sedang berlangsung")
+        # Kerangka AJAX dan endpoint API yang dipakai script
+        self.assertContains(response, 'id="grid"')
+        self.assertContains(response, reverse("api:experience-list"))
+        # Data TIDAK ada di HTML awal; dimuat browser lewat fetch
+        self.assertNotContains(response, self.experience.title)
         self.assertContains(response, f'href="{reverse("main:show_main")}"')
         self.assertContains(response, f'href="{reverse("main:show_education")}"')
 
@@ -66,55 +74,61 @@ class MainTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "education.html")
-        self.assertContains(response, self.education.institution)
-        self.assertContains(response, self.education.faculty)
-        self.assertContains(response, "Universitas Indonesia")
-        self.assertContains(response, f"{self.education.started_at} - current")
+        self.assertContains(response, 'id="grid"')
+        self.assertContains(response, reverse("api:education-list"))
+        self.assertNotContains(response, self.education.institution)
         self.assertContains(response, f'href="{reverse("main:show_main")}"')
         self.assertContains(response, f'href="{reverse("main:show_experience")}"')
 
+    # ----- Data: diperiksa lewat API -----------------------------------
+
+    def test_experience_data_comes_from_api(self):
+        data = self.get_api_json("api:experience-list")
+
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["title"], self.experience.title)
+        self.assertEqual(data[0]["description"], self.experience.description)
+        self.assertEqual(data[0]["category"], "internship")
+        self.assertTrue(data[0]["is_ongoing"])
+        self.assertIsNone(data[0]["ended_at"])
+
+    def test_education_data_comes_from_api(self):
+        data = self.get_api_json("api:education-list")
+
+        self.assertEqual(len(data), 1)
+        self.assertEqual(data[0]["institution"], self.education.institution)
+        self.assertEqual(data[0]["faculty"], self.education.faculty)
+        self.assertEqual(data[0]["started_at"], 2025)
+        self.assertIsNone(data[0]["ended_at"])
+
     def test_empty_experience_page(self):
         Experience.objects.all().delete()
-        response = self.client.get(reverse("main:show_experience"))
 
-        self.assertContains(response, "Belum ada pengalaman yang ditambahkan.")
+        self.assertEqual(self.get_api_json("api:experience-list"), [])
+        page = self.client.get(reverse("main:show_experience"))
+        self.assertContains(page, 'id="empty"')
 
     def test_empty_education_page(self):
         Education.objects.all().delete()
-        response = self.client.get(reverse("main:show_education"))
 
-        self.assertContains(response, "Belum ada riwayat pendidikan yang ditambahkan")
+        self.assertEqual(self.get_api_json("api:education-list"), [])
+        page = self.client.get(reverse("main:show_education"))
+        self.assertContains(page, 'id="empty"')
 
     def test_completed_experience(self):
         self.experience.ended_at = timezone.now()
         self.experience.save()
-        response = self.client.get(reverse("main:show_experience"))
+        data = self.get_api_json("api:experience-list")
 
         self.assertFalse(self.experience.is_ongoing)
-        self.assertContains(response, "Selesai")
-        self.assertNotContains(response, "Sedang berlangsung")
+        self.assertFalse(data[0]["is_ongoing"])
+        self.assertIsNotNone(data[0]["ended_at"])
 
     def test_completed_education(self):
         self.education.ended_at = timezone.now().year
         self.education.save()
-        response = self.client.get(reverse("main:show_education"))
+        data = self.get_api_json("api:education-list")
 
         self.assertFalse(self.education.is_ongoing)
-        self.assertContains(response, f"{self.education.started_at} - {self.education.ended_at}")
-        self.assertNotContains(response, f"{self.education.started_at} - current")
-
-
-"""
-Semua method yang namanya diawali test_ akan dijalankan otomatis oleh Django. Method setUp() dijalankan sebelum setiap test sehingga tiap test memperoleh data awal yang bersih.
-
-Sembilan test tersebut memeriksa hal yang berbeda:
-
-1.) Halaman profil dapat diakses, memakai index.html, tidak menampilkan kartu pengalaman, dan memiliki tautan ke halaman Experience.
-2.) URL yang tidak terdaftar menghasilkan status 404 Not Found.
-3.) Model menyimpan nilai dan menghitung is_ongoing dengan benar.
-4.) Halaman Experience memakai experience.html, menampilkan data model beserta kategori dan statusnya, serta memiliki tautan kembali ke profil.
-5.) Halaman Experience menampilkan pesan yang sesuai ketika belum ada data.
-6.) Pengalaman dengan ended_at terisi menampilkan status Selesai.
-
-reverse() mencari URL berdasarkan app_name dan name yang telah dibuat di main/urls.py, sama seperti tag {% url %} pada template. Cara ini membuat tautan dan test tetap mengikuti rute jika path berubah. assertNotContains memastikan teks tertentu tidak muncul dalam respons, sedangkan timezone.now() memberikan waktu saat ini untuk mengisi ended_at pada test pengalaman yang sudah selesai.
-"""
+        self.assertEqual(data[0]["started_at"], self.education.started_at)
+        self.assertEqual(data[0]["ended_at"], self.education.ended_at)
