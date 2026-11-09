@@ -1,4 +1,4 @@
-    {% extends 'base.html' %}
+{% extends 'base.html' %}
     {% block content%}
     <main>
         <section class="education-section" id="education">
@@ -6,11 +6,10 @@
                 <div class="project-header">
                     <h1>Education</h1>
                     {% if user.is_superuser %}
-                    <a href="{% url 'main:create_education' %}"
-                    class="button project-add-button">
+                    <button type="button" class="button project-add-button" popovertarget="add-education-modal">
                         <span aria-hidden="true">+</span>
                         Tambah Education
-                    </a>
+                    </button>
                     {% endif %}
                 </div>
                 <form id="education-search-form" class="project-search">
@@ -32,6 +31,9 @@
             </div>
         </section>
     </main>
+    {% if user.is_superuser or perms.main.change_education %}
+        {% include "components/education_form_modal.html" %}
+    {% endif %}
 
     {% csrf_token %}
     <script>
@@ -46,6 +48,7 @@
         const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
         const CAN_CHANGE_EDUCATION = "{{ perms.main.change_education|yesno:'true,false' }}" === "true";
         let educationAbortController;
+        const educationById = new Map();         // diisi oleh fetchEducation
     
         // Elemen DOM
         const loadingState = document.getElementById('loading');
@@ -75,7 +78,7 @@
                 .replaceAll("'", '&#39;');
         }
     
-        // Fetch data project
+        // Fetch data education
         async function fetchEducation(searchQuery = "") {
             if (educationAbortController) educationAbortController.abort();
             educationAbortController = new AbortController();
@@ -98,7 +101,9 @@
                     displayPageSection({ showEmpty: true });
                 } else {
                     gridContainer.innerHTML = '';
+                    educationById.clear();
                     educationData.forEach(item => {
+                        educationById.set(item.id, item);
                         gridContainer.appendChild(buildEducationCardElement(item));
                     });
                     displayPageSection({ showGrid: true });
@@ -136,11 +141,10 @@
 
         - setTimeout() menyimpan fungsi pencarian untuk dijalankan setelah SEARCH_DEBOUNCE_DELAY milidetik. Fungsi pencarian tersebut hanya benar-benar berjalan apabila tidak ada input baru sebelum waktunya habis.
 
-        - Fungsi searchProjects() digunakan oleh dua event handler agar logika pencarian tidak ditulis dua kali.
+        - Fungsi searchEducation() digunakan oleh dua event handler agar logika pencarian tidak ditulis dua kali.
 
         - Event submit tetap dipertahankan. Tombol Cari dan tombol Enter terlebih dahulu membatalkan timer yang mungkin masih menunggu, lalu langsung menjalankan pencarian.
         */
-    
 
         // Membaca nilai cookie, digunakan untuk mengambil token CSRF
         function getCookie(name) {
@@ -181,30 +185,108 @@
             return { response, data };
         }
 
+        // ---------- Modal tambah / edit ----------
+        function closeEducationModal() {
+            document.getElementById("add-education-modal").hidePopover();
+        }
 
-        /*
-        Penjelasan Kode
+        const educationForm = document.getElementById('education-form');
+        const educationModal = document.getElementById('add-education-modal');
+        const educationModalTitle = document.getElementById('education-modal-title');
+        const educationSubmitButton = educationForm
+            ? educationForm.querySelector('button[type="submit"]') : null;
+        const ADD_MODAL_TITLE = educationModalTitle ? educationModalTitle.textContent : '';
+        const ADD_SUBMIT_TEXT = educationSubmitButton ? educationSubmitButton.textContent : '';
+        let editingEducationId = null;           // null = mode tambah
 
-        - Modal hanya disertakan untuk superuser sehingga bagi pengunjung lain projectForm bernilai null. Pemeriksaan if (projectForm) mencegah addEventListener memicu error yang akan menghentikan sisa skrip, termasuk pemanggilan fetchProjects(). Dengan begitu, daftar proyek tetap tampil untuk semua pengunjung.
+        // Menyesuaikan nilai dari API dengan tipe input:
+        // date -> "2026-01-01", datetime-local -> "2026-01-01T09:00"
+        function toInputValue(input, value) {
+            if (!value) return '';
+            return input.type === 'datetime-local' ? String(value).slice(0, 16) : String(value).slice(0, 10);
+        }
 
-        - getCookie adalah fungsi pembaca cookie yang sudah kita bahas secara konseptual di Tutorial 04. Kini kita benar-benar menggunakannya untuk mengambil token dari cookie csrftoken dan mengirimkannya lewat header X-CSRFToken. CsrfViewMiddleware menerima token dari header ini atau dari field csrfmiddlewaretoken di dalam form (yang juga ikut terkirim lewat FormData). Permintaan tanpa salah satunya ditolak dengan status 403 Forbidden.
+        function setEducationFormMode(item) {
+            editingEducationId = item ? item.id : null;
+            if (educationModalTitle) educationModalTitle.textContent = item ? 'Edit Riwayat Pendidikan' : ADD_MODAL_TITLE;
+            if (educationSubmitButton) educationSubmitButton.textContent = item ? 'Simpan Perubahan' : ADD_SUBMIT_TEXT;
+        }
 
-        - new FormData(projectForm) mengumpulkan seluruh isi input di dalam form berdasarkan atribut name-nya. Data tersebut dikirim dengan format multipart/form-data, dan Django tetap membacanya lewat request.POST sehingga data dapat divalidasi oleh ProjectForm.
+        function openEditEducation(item) {
+            setEducationFormMode(item);
+            ['institution', 'faculty', 'thumbnail'].forEach(function (name) {
+                const input = educationForm.elements[name];
+                if (input) input.value = item[name] ?? '';
+            });
+            ['started_at', 'ended_at'].forEach(function (name) {
+                const input = educationForm.elements[name];
+                if (input) input.value = toInputValue(input, item[name]);
+            });
+            educationModal.showPopover();
+        }
 
-        - event.preventDefault() mencegah browser mengirim form dengan cara biasa (yang akan me-reload halaman). Pengiriman diambil alih sepenuhnya oleh fetch.
+        if (educationModal) {
+            educationModal.addEventListener('toggle', function (event) {
+                if (event.newState === 'closed' && editingEducationId !== null) {
+                    setEducationFormMode(null);
+                    educationForm.reset();
+                }
+            });
+        }
 
-        - Tombol submit dinonaktifkan selama permintaan berjalan agar proyek yang sama tidak tersimpan dua kali ketika tombol diklik berulang kali. Blok finally mengaktifkannya kembali, baik permintaan berhasil maupun gagal.
+        // Mengirim data form ke API (POST untuk tambah, PATCH untuk edit)
+        async function saveEducation(event) {
+            event.preventDefault();
 
-        - response.ok bernilai true untuk status 2xx. Jika berhasil, form dikosongkan, modal ditutup, toast sukses ditampilkan, dan fetchProjects() dipanggil ulang dengan kata kunci pencarian yang sedang aktif sehingga proyek baru langsung muncul jika sesuai dengan kata kunci tersebut.
+            const isEdit = editingEducationId !== null;
+            const url = isEdit ? endpointFor(DETAIL_ENDPOINT, editingEducationId) : BASE_ENDPOINT;
+            const method = isEdit ? 'PATCH' : 'POST';
 
-        - Jika gagal, pesan kesalahan dari server ditampilkan lewat toast. .catch(() => ({})) pada response.json() menangani respons yang bukan JSON (misalnya halaman HTML 403 dari kegagalan CSRF) agar tetap ditampilkan sebagai pesan dengan kode statusnya.
-        */
+            const submitButton = educationForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+
+            try {
+                const payload = Object.fromEntries(new FormData(educationForm));
+                delete payload.csrfmiddlewaretoken;
+                payload.ended_at = payload.ended_at || null;
+
+                const { response, data } = await writeData(url, method, payload);
+
+                if (response.ok) {
+                    educationForm.reset();
+                    setEducationFormMode(null);
+                    closeEducationModal();
+                    showToast(
+                        'Berhasil',
+                        isEdit ? 'Riwayat pendidikan berhasil diperbarui!' : 'Riwayat pendidikan baru berhasil ditambahkan!',
+                        'success'
+                    );
+                    fetchEducation(searchInput.value.trim());
+                } else {
+                    showToast(
+                        isEdit ? 'Gagal memperbarui riwayat pendidikan' : 'Gagal menambahkan riwayat pendidikan',
+                        apiErrorMessage(response.status, data),
+                        'error'
+                    );
+                }
+            } catch (error) {
+                console.error('Error saving education:', error);
+                showToast('Gagal menyimpan riwayat pendidikan', 'Tidak dapat terhubung ke server. Silakan coba lagi.', 'error');
+            } finally {
+                submitButton.disabled = false;
+            }
+        }
+
+        // Modal hanya disertakan untuk pengguna berizin; bagi pengunjung lain educationForm bernilai null.
+        if (educationForm) {
+            educationForm.addEventListener('submit', saveEducation);
+        }
 
         function buildEducationCardElement(education) {
-            const editUrl = "{% url 'main:update_education' '00000000-0000-0000-0000-000000000000' %}"
-                .replace(DUMMY_ID, education.id);
             const editHtml = CAN_CHANGE_EDUCATION
-                ? `<a href="${editUrl}" class="button">Edit</a>` : '';
+                ? `<button type="button" class="button button-edit"
+                        data-id="${escapeHtml(education.id)}">Edit</button>`
+                : '';
 
             const logoHtml = education.thumbnail
                 ? `<img class="institution-logo" src="${escapeHtml(education.thumbnail)}"
@@ -258,8 +340,15 @@
             return articleElement;
         }
 
-        // Menangani klik tombol Star dan Hapus pada kartu (event delegation)
+        // Menangani klik tombol Edit, Star, dan Hapus pada kartu (event delegation)
         gridContainer.addEventListener('click', async function (event) {
+            const editButton = event.target.closest('.button-edit');
+            if (editButton) {
+                const item = educationById.get(editButton.dataset.id);
+                if (item && educationForm) openEditEducation(item);
+                return;
+            }
+
             const starButton = event.target.closest('.button-star');
             const deleteButton = event.target.closest('.button-delete');
             const button = starButton || deleteButton;

@@ -16,7 +16,7 @@ class MainTest(TestCase):
         )
 
         self.education = Education.objects.create(
-            institution="Universitas Indonesia",
+            institution="Universitas Wakanda",
             faculty="Computer Science",
             thumbnail="/static/img/fasilkom.png",
             started_at=2025,
@@ -50,7 +50,7 @@ class MainTest(TestCase):
         self.assertTrue(self.experience.is_ongoing)
 
     def test_education_model(self):
-        self.assertEqual(str(self.education), "Universitas Indonesia")
+        self.assertEqual(str(self.education), "Universitas Wakanda")
         self.assertEqual(self.education.faculty, "Computer Science")
         self.assertTrue(self.education.is_ongoing)
 
@@ -74,8 +74,10 @@ class MainTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "education.html")
+
         self.assertContains(response, 'id="grid"')
         self.assertContains(response, reverse("api:education-list"))
+        
         self.assertNotContains(response, self.education.institution)
         self.assertContains(response, f'href="{reverse("main:show_main")}"')
         self.assertContains(response, f'href="{reverse("main:show_experience")}"')

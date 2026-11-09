@@ -196,21 +196,15 @@ def create_education(request):
 
 
 def show_education(request):
-    json_response = get_education_json(request)
-
-    educations = serializers.deserialize(
-        "json",
-        json_response.content.decode("utf-8"),
-    )
-    educations = [education.object for education in educations]
     institution_query = request.GET.get("institution", "").strip()
 
     context = {
         "name": "Parsya Rifqi Subhani Petrana",
-        "education_list": educations,
         "institution_query": institution_query,
+        "form": EducationForm(),
     }
     return render(request, "education.html", context)
+
 
 def get_education_json(request):
     institution_query = request.GET.get("institution", "").strip()
