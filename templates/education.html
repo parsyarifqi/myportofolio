@@ -7,53 +7,294 @@
                     <h1>Education</h1>
                     {% if user.is_superuser %}
                     <a href="{% url 'main:create_education' %}"
-                       class="button project-add-button">
+                    class="button project-add-button">
                         <span aria-hidden="true">+</span>
                         Tambah Education
                     </a>
                     {% endif %}
                 </div>
-                <form method="get"
-                      action="{% url 'main:show_education' %}"
-                      class="project-search">
+                <form id="education-search-form" class="project-search">
                     <input type="search"
-                           name="institution"
-                           value="{{ institution_query }}"
-                           placeholder="Cari berdasarkan nama institusi"
-                           class="project-search__input"
-                           aria-label="Cari berdasarkan nama institusi">
+                        id="search-input"
+                        name="institution"
+                        value="{{ institution_query }}"
+                        placeholder="Cari berdasarkan nama institusi"
+                        class="project-search__input"
+                        aria-label="Cari berdasarkan nama institusi">
                     <button type="submit" class="button">Cari</button>
                 </form>
 
-                <div class="education-grid">
-                    {% for education in education_list %}
-                        <article class="education-items">
-                            <img class="institution-logo" src="{{ education.thumbnail }}">
-                            <h2>{{ education.institution }}</h2>
+                <div id="loading" class="empty-state hide"><p>Memuat riwayat pendidikan...</p></div>
+                <div id="error" class="empty-state hide"><p>Gagal memuat data pendidikan. Silakan coba lagi.</p></div>
+                <div id="empty" class="empty-state hide"><p>Belum ada riwayat pendidikan yang ditambahkan atau ditemukan.</p></div>
 
-                            {% if education.has_faculty %}
-                                <h3>{{ education.faculty }}</h3>
-                            {% endif %}
-
-                            {% if education.is_ongoing %}
-                                <p>{{ education.started_at}} - current</p>
-                            {% else %}
-                                <p>{{ education.started_at}} - {{education.ended_at}}</p>
-                            {% endif %}
-                            {% if user.is_superuser %}
-                                {% include "components/education_delete_modal.html" with education=education %}
-                            {% endif %}
-                            {% if perms.main.change_education %}
-                                <a href="{% url 'main:update_education' education.id %}" class="button">Edit</a>
-                            {% endif %}
-                        </article>
-                    {% empty %}
-                        <p class="empty-state">
-                            Belum ada riwayat pendidikan yang ditambahkan
-                        </p>
-                    {% endfor %}
-                </div>
+                <div id="grid" class="education-grid hide"></div>
             </div>
         </section>
     </main>
+
+    {% csrf_token %}
+    <script>
+        // Konfigurasi
+        const BASE_ENDPOINT   = "{% url 'api:education-list' %}";
+        const DETAIL_ENDPOINT = "{% url 'api:education-detail' '00000000-0000-0000-0000-000000000000' %}";
+        const STAR_ENDPOINT   = "{% url 'api:education-star' '00000000-0000-0000-0000-000000000000' %}";
+        const DUMMY_ID = '00000000-0000-0000-0000-000000000000';
+
+        function endpointFor(pattern, id) { return pattern.replace(DUMMY_ID, id); }
+
+        const IS_SUPERUSER = "{{ user.is_superuser|yesno:'true,false' }}" === "true";
+        const CAN_CHANGE_EDUCATION = "{{ perms.main.change_education|yesno:'true,false' }}" === "true";
+        let educationAbortController;
+    
+        // Elemen DOM
+        const loadingState = document.getElementById('loading');
+        const errorState = document.getElementById('error');
+        const emptyState = document.getElementById('empty');
+        const gridContainer = document.getElementById('grid');
+        const searchForm = document.getElementById('education-search-form');
+        const searchInput = document.getElementById('search-input');
+        const SEARCH_DEBOUNCE_DELAY = 300;
+        let searchDebounceTimer;
+    
+        // Menyembunyikan/Menampilkan section halaman
+        function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+            loadingState.classList.toggle('hide', !showLoading);
+            errorState.classList.toggle('hide', !showError);
+            emptyState.classList.toggle('hide', !showEmpty);
+            gridContainer.classList.toggle('hide', !showGrid);
+        }
+    
+           // Mengubah karakter khusus HTML menjadi entity agar ditampilkan sebagai teks
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#39;');
+        }
+    
+        // Fetch data project
+        async function fetchEducation(searchQuery = "") {
+            if (educationAbortController) educationAbortController.abort();
+            educationAbortController = new AbortController();
+    
+            try {
+                displayPageSection({ showLoading: true });
+                
+                const url = searchQuery ? `${BASE_ENDPOINT}?institution=${encodeURIComponent(searchQuery)}` : BASE_ENDPOINT;
+                
+                const response = await fetch(url, {
+                    headers: { 'Accept': 'application/json' },
+                    signal: educationAbortController.signal,
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch data');
+    
+                const educationData = await response.json();
+    
+                if (educationData.length === 0) {
+                    displayPageSection({ showEmpty: true });
+                } else {
+                    gridContainer.innerHTML = '';
+                    educationData.forEach(item => {
+                        gridContainer.appendChild(buildEducationCardElement(item));
+                    });
+                    displayPageSection({ showGrid: true });
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') return;
+                console.error('Error loading education:', error);
+                displayPageSection({ showError: true });
+            }
+        }
+    
+        // Event Handlers untuk Form Search
+        function searchEducation() {
+            fetchEducation(searchInput.value.trim());
+        }
+
+        searchInput.addEventListener("input", function() {
+            clearTimeout(searchDebounceTimer);
+
+            searchDebounceTimer = setTimeout(function() {
+                searchEducation();
+            }, SEARCH_DEBOUNCE_DELAY);
+        });
+
+        searchForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            clearTimeout(searchDebounceTimer);
+            searchEducation();
+        });
+
+        /*
+        Penjelasan Kode:
+
+        - clearTimeout(searchDebounceTimer) membatalkan timer dari karakter sebelumnya. Saat pengguna mengetik huruf berikutnya, waktu tunggu selalu dihitung ulang dari awal.
+
+        - setTimeout() menyimpan fungsi pencarian untuk dijalankan setelah SEARCH_DEBOUNCE_DELAY milidetik. Fungsi pencarian tersebut hanya benar-benar berjalan apabila tidak ada input baru sebelum waktunya habis.
+
+        - Fungsi searchProjects() digunakan oleh dua event handler agar logika pencarian tidak ditulis dua kali.
+
+        - Event submit tetap dipertahankan. Tombol Cari dan tombol Enter terlebih dahulu membatalkan timer yang mungkin masih menunggu, lalu langsung menjalankan pencarian.
+        */
+    
+
+        // Membaca nilai cookie, digunakan untuk mengambil token CSRF
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function apiErrorMessage(status, data) {
+            if (data && data.detail) return data.detail;
+            if (data && typeof data === 'object') {
+                const messages = Object.values(data).flat().filter(m => typeof m === 'string');
+                if (messages.length) return messages.join(' ');
+            }
+            return `Terjadi kesalahan (status ${status}).`;
+        }
+
+        async function writeData(url, method, payload = null) {
+            const options = {
+                method,
+                headers: { 'Accept': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+            };
+            if (payload !== null) {
+                options.headers['Content-Type'] = 'application/json';
+                options.body = JSON.stringify(payload);
+            }
+            const response = await fetch(url, options);
+            const data = response.status === 204 ? null : await response.json().catch(() => null);
+            return { response, data };
+        }
+
+
+        /*
+        Penjelasan Kode
+
+        - Modal hanya disertakan untuk superuser sehingga bagi pengunjung lain projectForm bernilai null. Pemeriksaan if (projectForm) mencegah addEventListener memicu error yang akan menghentikan sisa skrip, termasuk pemanggilan fetchProjects(). Dengan begitu, daftar proyek tetap tampil untuk semua pengunjung.
+
+        - getCookie adalah fungsi pembaca cookie yang sudah kita bahas secara konseptual di Tutorial 04. Kini kita benar-benar menggunakannya untuk mengambil token dari cookie csrftoken dan mengirimkannya lewat header X-CSRFToken. CsrfViewMiddleware menerima token dari header ini atau dari field csrfmiddlewaretoken di dalam form (yang juga ikut terkirim lewat FormData). Permintaan tanpa salah satunya ditolak dengan status 403 Forbidden.
+
+        - new FormData(projectForm) mengumpulkan seluruh isi input di dalam form berdasarkan atribut name-nya. Data tersebut dikirim dengan format multipart/form-data, dan Django tetap membacanya lewat request.POST sehingga data dapat divalidasi oleh ProjectForm.
+
+        - event.preventDefault() mencegah browser mengirim form dengan cara biasa (yang akan me-reload halaman). Pengiriman diambil alih sepenuhnya oleh fetch.
+
+        - Tombol submit dinonaktifkan selama permintaan berjalan agar proyek yang sama tidak tersimpan dua kali ketika tombol diklik berulang kali. Blok finally mengaktifkannya kembali, baik permintaan berhasil maupun gagal.
+
+        - response.ok bernilai true untuk status 2xx. Jika berhasil, form dikosongkan, modal ditutup, toast sukses ditampilkan, dan fetchProjects() dipanggil ulang dengan kata kunci pencarian yang sedang aktif sehingga proyek baru langsung muncul jika sesuai dengan kata kunci tersebut.
+
+        - Jika gagal, pesan kesalahan dari server ditampilkan lewat toast. .catch(() => ({})) pada response.json() menangani respons yang bukan JSON (misalnya halaman HTML 403 dari kegagalan CSRF) agar tetap ditampilkan sebagai pesan dengan kode statusnya.
+        */
+
+        function buildEducationCardElement(education) {
+            const editUrl = "{% url 'main:update_education' '00000000-0000-0000-0000-000000000000' %}"
+                .replace(DUMMY_ID, education.id);
+            const editHtml = CAN_CHANGE_EDUCATION
+                ? `<a href="${editUrl}" class="button">Edit</a>` : '';
+
+            const logoHtml = education.thumbnail
+                ? `<img class="institution-logo" src="${escapeHtml(education.thumbnail)}"
+                        alt="Logo ${escapeHtml(education.institution)}">`
+                : '';
+
+            const deleteHtml = IS_SUPERUSER
+                ? `<button type="button"
+                        class="button button-danger button-delete"
+                        data-id="${escapeHtml(education.id)}">Hapus</button>`
+                : '';
+
+            const isStarredClass = education.is_starred ? ' is-starred' : '';
+            const starText = education.is_starred ? 'Unstar' : 'Star';
+            const starTitle = education.star_count > 0
+                ? `Dibintangi oleh ${escapeHtml(education.starred_by_names)}`
+                : 'Jadilah yang pertama memberi star';
+            const starButtonHtml = `
+                <button type="button"
+                        class="button button-star${isStarredClass}"
+                        data-id="${escapeHtml(education.id)}"
+                        title="${starTitle}">
+                    <span aria-hidden="true">★</span>
+                    ${starText}
+                    <span class="star-count">${education.star_count}</span>
+                </button>`;
+
+            const facultyHtml = education.faculty
+                ? `<h3>${escapeHtml(education.faculty)}</h3>`
+                : '';
+
+            const periodText = education.ended_at != null
+                ? `${education.started_at} - ${education.ended_at}`
+                : `${education.started_at} - current`;
+
+            const articleElement = document.createElement('article');
+            articleElement.className = 'education-items';
+            articleElement.innerHTML = `
+                ${logoHtml}
+                <h2>${escapeHtml(education.institution)}</h2>
+                ${facultyHtml}
+                <p>${escapeHtml(periodText)}</p>
+                <div class="project-card-actions">
+                    <div class="project-actions">
+                        ${starButtonHtml}
+                        ${deleteHtml}
+                        ${editHtml}
+                    </div>
+                </div>
+            `;
+            return articleElement;
+        }
+
+        // Menangani klik tombol Star dan Hapus pada kartu (event delegation)
+        gridContainer.addEventListener('click', async function (event) {
+            const starButton = event.target.closest('.button-star');
+            const deleteButton = event.target.closest('.button-delete');
+            const button = starButton || deleteButton;
+            if (!button) return;
+
+            if (deleteButton && !confirm('Yakin ingin menghapus riwayat pendidikan ini?')) return;
+
+            button.disabled = true;
+
+            try {
+                const { response, data } = starButton
+                    ? await writeData(endpointFor(STAR_ENDPOINT, button.dataset.id), 'POST')
+                    : await writeData(endpointFor(DETAIL_ENDPOINT, button.dataset.id), 'DELETE');
+
+                if (!response.ok) {
+                    showToast(
+                        starButton ? 'Gagal memberi star' : 'Gagal menghapus riwayat pendidikan',
+                        apiErrorMessage(response.status, data),
+                        'error'
+                    );
+                    button.disabled = false;
+                    return;
+                }
+
+                if (deleteButton) {
+                    showToast('Berhasil', 'Riwayat pendidikan berhasil dihapus.', 'success');
+                }
+                fetchEducation(searchInput.value.trim());
+            } catch (error) {
+                console.error('Error pada aksi kartu:', error);
+                showToast('Gagal', 'Tidak dapat terhubung ke server. Silakan coba lagi.', 'error');
+                button.disabled = false;
+            }
+        });
+        // Start application
+        fetchEducation(searchInput.value.trim());
+    </script>
     {% endblock content%}
