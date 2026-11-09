@@ -169,3 +169,59 @@ merge branch to main agar sinkron dengan branch utama
 
 ### Tugas 5 End ###
 
+### Tugas 6 ###
+
+### Pertanyaan Reflektif:
+1. REST adalah singkatan dari Representational State Transfer. REST adalah gaya arsitektural perangkat lunak yang mendeskripsikan antarmuka yang seragam antara komponen-komponen yang terpisah secara fisik, sering kali melalui internet dalam arsitektur client-server. 
+
+Alasan JSON saja belum cukup disebut RESTful adalah karena JSON hanyalah fomrat data. Endpoint seperti POST /api/getData yang selalu menjawab 200 OK dengan JSON tidak memakai resource, metode, dan status code dengan benar sehingga tidak RESTful. 
+
+Perbedaan PUT dan PATCH
+PUT:
+-mengganti seluruh resource
+-semua field wajib dikirim
+-field yang tidak dikirm dianggap hilang atau ditolak
+
+PATCH:
+-hanya mengubah sebagian field
+-hanya field yang diubah yang dikirim
+-field yang tidak dikirim tetap seperti semula
+
+2. Serializer bekerja dua arah. pada GET, serializer mengubah objek model menjadi tipe data python yang dapat dirender ke JSON (serialization). pada POST/PATCH, serializer mengubah input menjadi data yang sudah divalidasi dan siap disimpan (deserialization). Hasil serializer belum berupa string JSON, renderer DRF yang mengubahnya menjadi isi response.
+
+Keuntungan serializer dibanting merakit dictionary secara manual dengan JsonResponse adalah Serializer:
+- Serializer mengubah objek model menjadi JSON sekaligus memvalidasi data. Dibanding dengan JsonResponse dimanaa kita menulis dictionary untuk output lalu memvalidasi secara terpisah
+
+- Daftar fields ditulis ekspilisit, jadi data sensitif seperti email atau password tidak ikut bocor. 
+
+- Dictionary manual harus ditulis ulang di setiap view dibandingkan dengan serialzier yang cukup sekali dan dipakai di fungsi view yang lainnya sehingga menghindari dupilikasi.
+
+3. Autentikasi adalah proses mengidentifikasi identitas dari user. Autentikasi dilakukan saat login dimana kita mengecek informasi username dan password lalu mencocokan dengan informasi yang disimpan dalam database. Sedangkan otorisasi adalah izin yang diberikan kepada pengguna. Otorisasi mengatur fitur atau resource apa saja yang bisa diakses oleh pengguna untuk mencegah penyalahgunaan akses.
+
+Hak akses diperiksa dengan permission class di server karena jika hanya menyembunyikan tombol di template, orang-orang masih bisa mengakses fitur/resource tertentu dengan mengakses langsung lewat endpoint. dengan menggunakan permission class, kita mengecek apakah pengguna memiliki hak akses sehingga mencegah pengaksesan fitur yang tidak terotorisasi lewat endpoint.
+
+4. SessionAuthentication mengenali pengguna lewat cookie sesion dan browser mengirim cookie tersebut secara otomatis ke domain, termasuk permintaan yang dipicu dari tempat lain. tanpa token CSRF, situs lain bisa membuat pengguna yang sedang login mengiri POST, PATCH, atau delete ke API dan diterima oleh server sebagai perintah yang sah karena cookie sessionnya berasal dari pengguna yang sedang login.
+
+force_authenticate mengisi requsst.user secara langsung tanpa proses autentikasi, temasuk sessionAuthentication yang  melakukan pengecekan token CSRF. Test akan tetapi lolos walaupun perlindungan CSRF di matikan sehingga tidak menguji apakah perlindungan CSRF benar-benar berjalan.
+
+### -AI DISCLOSURE-:
+Saya menyatakan bahwa pengerjaan tugas individu 6 ini saya kerjakan dengan menggunakan bantuan AI. Strategi penggunaan AI saya adalah dengan mengirimkan soal yang diberikan lalu memintanya untuk membuat struktur pengerjaan yang bertahap dan jelas. Selain itu saya juga menggunakan AI untuk proses debug dan mencari error. Selain itu AI juga saya pergunakan sebagai tracker sejauh mana progress pengerjaan tugas saya dan mengecek apakah ada requirement dari soal yang belum dikerjakan. Untuk chat AI yang saya gunakan: https://claude.ai/share/436cd12d-b49d-40d5-adf8-065bf03f84cd
+
+### Instruksi setup mingguan:
+membuat branch baru sesuai dengan tugas/tutorial yang diberikan
+menjalankan virtual environment
+melakukan instruksi yang diberikan tugas atau tutorial dan commit berkala
+melakukan makemigrations dan migrate apabila terdapat perubahan pada struktur data yang disimpan
+merge branch to main agar sinkron dengan branch utama
+
+### Progress Mingguan:
+7 november: menambahkan class ExperienceSerializer untuk serializer model Experience di main/serializers.py
+7 november: menambahkan class EducationSerializer untuk serializer model Education di main/serializers.py
+8 november: membuat API view untuk model Experience dan Education
+8 november: routin main/api_urls.py untuk model Experience dan Education
+9 november: menyesuaikan template experience.html untuk memakai API baru dengan AJAX
+9 november: menyesuaikan tempate education.html untuk memakai API baru dengan AJAX
+9 november: menambahkan test case untuk experience dan education API, menyesuaikan main/tests.py dengan AJAX yang berlaku
+9 november: memperbaiki pemission/star API dan tambah modal tambah-edit Education
+
+### Tugas 6  End###
