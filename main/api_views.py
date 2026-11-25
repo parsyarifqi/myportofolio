@@ -6,6 +6,7 @@ from rest_framework.decorators import (
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 
 from main.models import Project, Experience, Education
 from main.permissions import IsPortfolioOwnerOrReadOnly, IsPortfolioOwnerOrEditorOrReadOnly
@@ -184,3 +185,13 @@ def education_star(request, education_id):
         education.starred_by.add(request.user)
     serializer = EducationSerializer(education, context={"request": request})
     return Response(serializer.data)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def api_logout(request):
+    # TODO: Delete request.auth if it is not None, then return HTTP 204 No Content
+    if request.auth != None:
+        request.auth.delete()
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
