@@ -22,4 +22,5 @@ from portofolio.views import landing_page
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("main.urls")),
+    path("api/", include("main.api_urls")),
 ]
